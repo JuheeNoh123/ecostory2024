@@ -1,63 +1,38 @@
-a='{\n' +
-    '    "친환경을 위한 요소": {\n' +
-    '        "생활습관": [\n' +
-    '            "가정에서 물을 절약하기",\n' +
-    '            "장바구니를 사용하여 일회용플라스틱 줄이기",\n' +
-    '            "에코백을 사용하여 재사용하기",\n' +
-    '            "텀블러를 사용하여 일회용 컵 줄이기",\n' +
-    '            "플라스틱 빨대 대신 종이나 스테인리스 빨대 사용하기",\n' +
-    '            "가정에서 음식물쓰레기를 재활용하기",\n' +
-    '            "친환경 세제를 사용하기",\n' +
-    '            "가정에서 에너지 소비를 줄이기",\n' +
-    '            "조명을 LED로 교체하여 전기 절약하기",\n' +
-    '            "생활용품이나 옷을 중고 구매하기"\n' +
-    '        ],\n' +
-    '        "교통": [\n' +
-    '            "대중교통을 이용하기",\n' +
-    '            "자전거 타기",\n' +
-    '            "차량 유지보수로 연료효율 높이기",\n' +
-    '            "친환경 자동차 사용하기",\n' +
-    '            "깨끗한 연료 사용하기",\n' +
-    '            "친환경 자전거 도로를 이용하기",\n' +
-    '            "출퇴근 시 공유 자동차 이용하기",\n' +
-    '            "소형 차량 구매하기",\n' +
-    '            "하이브리드 자동차 구매하기",\n' +
-    '            "자동차 주행거리 최적화하기"\n' +
-    '        ],\n' +
-    '        "식습관": [\n' +
-    '            "유기농 농산물 구매하기",\n' +
-    '            "지역 농산물 구매하기",\n' +
-    '            "가공식품 대신 신선한 식재료 구매하기",\n' +
-    '            "포장이 적은 제품 구매하기",\n' +
-    '            "식품의 유통거리 짧게 구매하기",\n' +
-    '            "고기 소비 줄이고 채소 중심 식사하기",\n' +
-    '            "정량한 식재료 구매하기",\n' +
-    '            "식재료 낭비 줄이기",\n' +
-    '            "식재료 재활용을 고려하기",\n' +
-    '            "가축 사육이 적은 채식 생활 실천하기"\n' +
-    '        ],\n' +
-    '        "지원활동": [\n' +
-    '            "환경 보호 단체에 가입하기",\n' +
-    '            "지역 환경 정화 활동에 참여하기",\n' +
-    '            "나무 심기 캠페인에 참여하기",\n' +
-    '            "플라스틱 대신 종이나 비닐봉투 사용 캠페인에 참여하기",\n' +
-    '            "환경 보호 캠페인 홍보하기",\n' +
-    '            "재활용 캠페인에 참여하기",\n' +
-    '            "친환경 방송 프로모션에 참여하기",\n' +
-    '            "지역 친환경 농업 활성화 캠페인에 참여하기",\n' +
-    '            "환경 교육 과정 참여하기",\n' +
-    '            "친환경 제품 소개 자원봉사하기"\n' +
-    '        ]\n' +
-    '    }\n' +
-    '}'
+add_data='{\n' +
+'    "생활": [\n' +
+'      "일회용품 대신 재사용 가능한 용기 사용하기",\n' +
+'      "도시림에 나무 심기",\n' +
+'      "자원순환을 생각하며 쇼핑하기",\n' +
+'      "종이를 많이 사용하는 것을 줄이기",\n' +
+'      "네모지기를 줄이는 것이 환경에 좋음",\n' +
+'      "수도꼭지에 물을 닦기",\n' +
+'      "농약을 사용하지 않는 유기농 농산물 구입하기",\n' +
+'      "공공장소에 있는 쓰레기통을 이용하여 쓰레기를 버리기",\n' +
+'      "친환경 제품을 구입하기",\n' +
+'      "가정에서 자체적으로 재생 가능한 에너지 사용하기"\n' +
+'    ]\n' +
+'}'
 
-//console.log(a);
-b=JSON.parse(a);
-//console.log(b);
-c=Object.keys(b);   //'친환경을 위한 요소'
-c.forEach(element => { 
-    Object.keys(b[element]).forEach(e=>{
 
-        console.log(e,b[element][e]);
+//let category= new category_model(category_NM);
+//console.log(add_data);
+//let category_Id = category.find();
+//let category= new category_model(category_NM);
+//console.log(add_data);
+//let category_Id = await category.find();
+//console.log(category_Id['category_Id']);
+response=JSON.parse(add_data);
+title=Object.keys(response); //생활
+//console.log(title); //['친환경을 위한 요소']
+let result = [];
+title.forEach(async element => {
+    response[element].forEach(async (value, index)=>{
+        console.log('Index: ' + index + ' Value: ' + value);
+        //let guide= new guide_model(response[element][cg], category_Id['category_Id']);
+        //let save = await guide.save();  
+        //console.log("db save : " , save);               
+        
     })
-});
+    console.log("response[element]: \n",response[element]);
+    result = response[element];
+})

@@ -30,4 +30,14 @@ module.exports = class Category{
             return false;
         }
     }
+
+    async findAll(){
+        try{
+            let category_NM = await db.execute('SELECT category_Id,category_NM FROM category');
+            return category_NM;
+        }
+        catch {
+            return false;
+        }
+    }
 }
