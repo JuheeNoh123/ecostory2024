@@ -13,8 +13,9 @@ var loginRouter = require('./src/signup/login');
 var dataRouter = require('./src/ecodata/ecodata');
 //var indexRouter = require('./index/index');
 var gptRouter = require('./src/gpt/callgpt');
+var verify = require('./src/signup/verify');
 
-
+//app.use(verify);
 app.use('/user',signupRouter);
 app.use('/user',loginRouter);
 app.use('/', dataRouter);
