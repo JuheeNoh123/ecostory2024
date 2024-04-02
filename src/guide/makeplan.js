@@ -32,7 +32,6 @@ async function randomInt(min, max){
 }
 
 router.post('/makeplan', async(req,res)=>{
-    const userid = req.body.userid;
     const guide_list = req.body.checklist.guide_Id;
     const listcnt= guide_list.length;
     const category_Id = req.body.checklist.category_Id;
@@ -75,10 +74,26 @@ router.post('/makeplan', async(req,res)=>{
 
     }
 
-    
     //final_list.push()
     console.log(final_list);
-    res.send(final_list)
+
+    // 변환된 결과를 담을 배열
+    let transformedData = [];
+
+    // 요구 사항에 따라 데이터를 그룹화
+    const groups = {};
+
+    const groupedByFive = [];
+    let count = 1;
+
+    for (let i = 0; i < final_list.length; i += 5) {
+        const group = {};
+        group[count++] = final_list.slice(i, i + 5).map((item, index) => ({[`${index + 1}`]: item.guide_NM}));
+        groupedByFive.push(group);
+    }
+    
+    transformedData = JSON.stringify(groupedByFive);
+    res.send(transformedData);
     
 })
 module.exports = router;
