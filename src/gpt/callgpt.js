@@ -42,7 +42,7 @@ async function addlist(add_data, category_NM){
         let category= new category_model(category_NM);
         //console.log(add_data);
         let category_Id = await category.find();
-        console.log(category_Id['category_Id']);
+        //console.log(category_Id['category_Id']);
         response=JSON.parse(add_data);
         title=Object.keys(response); //생활
         //console.log(title); //['친환경을 위한 요소']
@@ -56,7 +56,7 @@ async function addlist(add_data, category_NM){
             })
             
         })
-        console.log("response[category_NM]: \n",response[category_NM]);
+        //console.log("response[category_NM]: \n",response[category_NM]);
         result = response[category_NM];
         return result;
     }
@@ -96,9 +96,22 @@ router.post('/askmore', async (req, res)=>{
     if(response){
         console.log(response["content"]);
         add_data = await addlist(response["content"], category_NM);
-        //add_data = await addlist(response, category_NM);
-        console.log("add_data : \n",add_data);
-        res.json({"data":add_data});
+        var data = [];
+        for(let i=0;i<add_data.length;i++){
+            let guide = new guide_model();
+            let guide_Id_list = await guide.findwithguide_NM(add_data[i]);
+            //console.log(guide_Id_list);
+            let guide_Id = guide_Id_list[0][0].guide_Id;
+            var jsonObject = {
+                'guide_Id': guide_Id,
+                'guide_NM': add_data[i]
+            }
+
+            data.push(jsonObject);
+            
+        }
+        console.log("data : ",data);
+        res.json(data);
         //res.send("db 저장 완료?");
     }
     else{

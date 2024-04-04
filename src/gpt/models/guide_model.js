@@ -54,4 +54,14 @@ module.exports = class Guide{
         }
     }
 
+    async findwithguide_NM(guide_NM){
+        try{
+            let guide_Id = await db.execute('SELECT guide_Id from guide where guide.guide_NM = ?',[guide_NM]);
+            return guide_Id;
+        }
+        catch{
+            return false;
+        }
+    }
+
 }

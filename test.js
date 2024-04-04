@@ -1,38 +1,39 @@
-add_data='{\n' +
-'    "생활": [\n' +
-'      "일회용품 대신 재사용 가능한 용기 사용하기",\n' +
-'      "도시림에 나무 심기",\n' +
-'      "자원순환을 생각하며 쇼핑하기",\n' +
-'      "종이를 많이 사용하는 것을 줄이기",\n' +
-'      "네모지기를 줄이는 것이 환경에 좋음",\n' +
-'      "수도꼭지에 물을 닦기",\n' +
-'      "농약을 사용하지 않는 유기농 농산물 구입하기",\n' +
-'      "공공장소에 있는 쓰레기통을 이용하여 쓰레기를 버리기",\n' +
-'      "친환경 제품을 구입하기",\n' +
-'      "가정에서 자체적으로 재생 가능한 에너지 사용하기"\n' +
-'    ]\n' +
-'}'
+const guide_model = require('./src/gpt/models/guide_model');
+add_data = [ "친환경 단체에 가입하여 활동하기", 
+"지역 및 봉사 활동에 참여하기", 
+"동물 보호 시설에서 봉사하기", 
+"친환경 운동에 동참하기", 
+"친환경 교육과 캠페인 활동에 참여하기", 
+"지역 커뮤니티 활동에 참여하기", 
+"환경을 주제로 한 문화 활동에 참여하기", 
+"친환경 제품을 지원하는 기부하기", 
+"친환경 활동을 홍보하기", 
+"지구를 위해 무엇이든 할 것을 결심하기" ];
 
+guide_Id_list= [
+    [ { guide_Id: 222 } ],
+    [ '`guide_Id` INT NOT NULL PRIMARY KEY AUTO_INCREMENT ']
+  ];
 
-//let category= new category_model(category_NM);
-//console.log(add_data);
-//let category_Id = category.find();
-//let category= new category_model(category_NM);
-//console.log(add_data);
-//let category_Id = await category.find();
-//console.log(category_Id['category_Id']);
-response=JSON.parse(add_data);
-title=Object.keys(response); //생활
-//console.log(title); //['친환경을 위한 요소']
-let result = [];
-title.forEach(async element => {
-    response[element].forEach(async (value, index)=>{
-        console.log('Index: ' + index + ' Value: ' + value);
-        //let guide= new guide_model(response[element][cg], category_Id['category_Id']);
-        //let save = await guide.save();  
-        //console.log("db save : " , save);               
+  
+async function test(){
+    var data = [];
+    for(let i=0;i<add_data.length;i++){
+        //let guide = new guide_model();
+        //let guide_Id_list =guide.findwithguide_NM(add_data[i]);
+        let guide_Id = guide_Id_list[0][0].guide_Id;    //222
+        //console.log("guide_Id : ",guide_Id);
+        //data.$[{guide_Id}] = add_data[i];   //add_data[i] : '지구를 위해 무엇이든 할 것을 결심하기' 
+        var jsonObject = {
+            'guide_Id': guide_Id,
+            'guide_NM': add_data[i]
+        }
+
+        data.push(jsonObject);
         
-    })
-    console.log("response[element]: \n",response[element]);
-    result = response[element];
-})
+    }
+
+    console.log("data : ",data);
+}
+
+test();
