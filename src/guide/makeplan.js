@@ -121,7 +121,7 @@ router.post('/delete', async(req,res)=>{
     
     const transformedData = ans.map(item => ({
         week: item.week,
-        guide_Id: item.guide_Id.guide_NM
+        guide_NM: item.guide_Id.guide_NM
       }));
 
     res.send(transformedData); 
