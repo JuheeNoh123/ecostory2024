@@ -1,13 +1,13 @@
 const express = require('express');
 var router = express.Router();
+const fs = require('fs');
 
 
 const reg_model = require('./models/reg_model');
 const verify = require('./verify');
 const jwt = require('jsonwebtoken');
-
-const PRIVATEKEY = process.env.PRIVATEKEY;
-
+//const PRIVATEKEY = process.env.PRIVATEKEY;
+const privateKey = fs.readFileSync('./bin/privateKey.key', 'utf8');
 
 router.post('/login', async (req, res) => {
     const { userid, password } = req.body;
@@ -17,12 +17,12 @@ router.post('/login', async (req, res) => {
     let user = new reg_model(userid, password);
     const checklogin = await user.login();
     console.log("[login.js > post > login]",user);
-    
+    console.log(privateKey);
     if(checklogin){
         const token = jwt.sign({        
             userid: user.userid      
-        }, PRIVATEKEY, {
-            algorithm: 'ES256',
+        }, privateKey, {
+            algorithm: 'RS256',
             expiresIn: '1h'      
         });
         

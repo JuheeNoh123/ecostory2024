@@ -1,5 +1,7 @@
+const fs = require('fs');
 const jwt = require('jsonwebtoken');
-const PUBLICKEY = process.env.PUBLICKEY;
+//const PUBLICKEY = process.env.PUBLICKEY;
+const publickey = fs.readFileSync('./bin/publicKey.key', 'utf8');
 
 
 function authenticateToken(req, res, next) {
@@ -14,7 +16,7 @@ function authenticateToken(req, res, next) {
       return res.sendStatus(401);
     }
   
-    jwt.verify(token, PUBLICKEY, { algorithms: 'ES256' }, (err, user) => {
+    jwt.verify(token, publickey, { algorithms: 'RS256' }, (err, user) => {
       if (err) {
         // 토큰이 유효하지 않으면 403 Forbidden 응답을 보냅니다.
         return res.sendStatus(403);
