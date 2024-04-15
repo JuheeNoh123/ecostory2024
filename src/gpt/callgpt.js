@@ -90,7 +90,9 @@ router.post('/ask', async (req, res)=>{
 
 //카테고리 리스트 출력 라우터
 router.get('/viewmain', async(req,res)=>{
-
+    const category = new category_model();
+    const category_data = await category.findAll();
+    res.send(category_data[0]);
 })
 
 //10개씩 끊어서 보여주는 라우터
