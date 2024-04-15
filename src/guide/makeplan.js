@@ -103,25 +103,27 @@ router.post('/delete', async(req,res)=>{
 */
     const ans = req.body;
     const guide = new guide_model;
-
+    
     for(let i=0;i<ans.length;i++){
         const delete_Id = ans[i].guide_Id;
         let idx = await randomInt(1, 224);
-        let new_Id = await guide.findwithguideId(idx);
-        console.log(new_Id[0][0]);
-        while(new_Id[0][0] == undefined || idx == delete_Id){
+        let new_NM = await guide.findwithguideId(idx);
+        console.log(new_NM[0][0]);
+        while(new_NM[0][0] == undefined || idx == delete_Id){
             idx = await randomInt(1, 224);
-            new_Id = await guide.findwithguideId(idx);
+            new_NM = await guide.findwithguideId(idx);
             console.log(idx);
         }
-        ans[i].guide_Id = new_Id[0][0];
-        console.log(idx);
-        console.log(ans);
+        console.log(new_NM[0][0]);
+        ans[i].guide_Id = await guide.findwithguide_NM(new_NM[0][0].guide_NM);
+        ans[i].guide_NM = new_NM[0][0];
     }
     
+
     const transformedData = ans.map(item => ({
         week: item.week,
-        guide_NM: item.guide_Id.guide_NM
+        guide_Id: item.guide_Id[0][0].guide_Id,
+        guide_NM: item.guide_NM.guide_NM
       }));
 
     res.send(transformedData); 
