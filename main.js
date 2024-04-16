@@ -1,6 +1,48 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+const cron = require('node-cron');
+const { spawn } = require('child_process');
+
+function runPythonScript() {
+  const pythonProcess = spawn('python', ['data/data_mean.py']);
+
+  pythonProcess.stdout.on('data', (data) => {
+    console.log(`파이썬 출력1: ${data}`);
+  });
+
+  pythonProcess.stderr.on('data', (data) => {
+    console.error(`파이썬 오류: ${data}`);
+  });
+
+  pythonProcess.on('close', (code) => {
+    console.log(`파이썬 프로세스 종료, 종료 코드: ${code}`);
+  });
+}
+
+
+function runPythonScript_2() {
+  const pythonProcess = spawn('python', ['data/database.py']);
+
+  pythonProcess.stdout.on('data', (data) => {
+    console.log(`파이썬 출력2: ${data}`);
+  });
+
+  pythonProcess.stderr.on('data', (data) => {
+    console.error(`파이썬 오류: ${data}`);
+  });
+
+  pythonProcess.on('close', (code) => {
+    console.log(`파이썬 프로세스 종료, 종료 코드: ${code}`);
+  });
+}
+
+// cron.schedule('10 * * * * *', () => {
+//   console.log('파이썬 파일 실행');
+//   runPythonScript();
+//   //runPythonScript_2();
+// });
+
 //var cookieParser = require('cookie-parser');
 
 app.use(express.json());

@@ -7,9 +7,9 @@ try:
     data_air = pd.read_csv('data\data_air.csv', na_values=[''])  # 대기오염물질 농도값 등의 데이터
 
     # NaN 값을 적절한 값으로 대체
-    data_emission.fillna(data_emission.mean(), inplace=True)
-    data_waste.fillna(data_waste.mean(), inplace=True)
-    data_air.fillna(data_air.mean(), inplace=True)
+    data_emission.fillna(data_emission.mean(numeric_only=True), inplace=True)
+    data_waste.fillna(data_waste.mean(numeric_only=True), inplace=True)
+    data_air.fillna(data_air.mean(numeric_only=True), inplace=True)
 
     # 가중치 설정
     weight_emission = 0.4
