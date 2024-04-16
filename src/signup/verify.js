@@ -2,8 +2,8 @@ const fs = require('fs');
 const jwt = require('jsonwebtoken');
 //const PUBLICKEY = process.env.PUBLICKEY;
 const publickey = fs.readFileSync('./bin/publicKey.key', 'utf8');
-
-
+//const privateKey = fs.readFileSync('./bin/private_key.pem')
+//const privateKey = fs.readFileSync('./bin/privateKey.key', 'utf8');
 function authenticateToken(req, res, next) {
     // 요청 헤더에서 'Authorization' 값을 가져옵니다.
     const authHeader = req.headers['authorization'];
