@@ -36,4 +36,9 @@ module.exports = class User {
             return false;
         }
     }
+
+    async findId(){
+        let userId = await db.execute('select id from user where userId = ?', [this.userid]);
+        return userId;
+    }
 };

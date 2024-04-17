@@ -1,7 +1,8 @@
 const express = require('express');
 var router = express.Router();
 const guide_model = require('../gpt/models/guide_model');
-
+const checklist_model = require('./models/checklist_model');
+const user_model = require('../signup/models/reg_model');
 
 const sum = [];
 const final_list = [];
@@ -131,51 +132,51 @@ router.post('/delete', async(req,res)=>{
 
 router.post('/save', async(req, res)=>{
 /*
-    {
-	"userId" : "njh",
-		"list" : [
-		{
-			"1": [
-				{
-					"1": "식사를 할 때 음식 남김을 최소화하기"
-				},
-				{
-					"2": "지구 친화적 옷차림"
-				},
-				{
-					"3": "깨끗한 연료를 사용하는 차량을 선택하기"
-				},
-				{
-					"4": "식사 계획 세우기"
-				},
-				{
-					"5": "자전거 나 걷기"
-				}
-			]
-		},
-		{
-			"2": [
-				{
-					"1": "대중교통 이용"
-				},
-				{
-					"2": "자전거 나 걷기"
-				},
-				{
-					"3": "부동산 재활용 제품 구매"
-				},
-				{
-					"4": "가정에서 야채와 과일을 자체 재배하기"
-				},
-				{
-					"5": "지역 시장 이용"
-				}
-			]
-		},
-		...
-	]
+   {
+        "userId" : "njh",
+                "list" : [
+                {
+                        "1": [5,7,10,33,65 ]
+                },
+                {
+                        "2": [6,8,11,44,74]
+                },
+                ...
+        ]
 }
 */
+    const resuserId = req.body.userId;
+    const reslist = req.body.list;
+    
+    const user = new user_model(resuserId);
 
+    console.log("resuserId : ",resuserId);
+    console.log("reslist : ",reslist);
+
+    let find_userId = await user.findId();
+    let userId = find_userId[0][0].id;
+    let IsWeekList1 = false;
+    let IsWeekList2 = false;
+    let IsWeekList3 = false;
+    let IsWeekList4 = false;
+    let IsWeekList5 = false;
+    console.log(userId);
+    for(let i = 0; i<5; i++){
+        let jsonObject = reslist[i];
+        let keys = Object.keys(jsonObject);
+        let weekNM = keys[0];
+        let WeekListID = jsonObject[weekNM];
+        const checklist = new checklist_model(userId, weekNM, 
+                            WeekListID[0], IsWeekList1,
+                            WeekListID[1], IsWeekList2,
+                            WeekListID[2], IsWeekList3,
+                            WeekListID[3], IsWeekList4,
+                            WeekListID[4], IsWeekList5);
+        await checklist.save();
+    }
+    
+
+    
+    return res.send({ message: 'ok' });
 })
 module.exports = router;
