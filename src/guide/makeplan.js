@@ -145,13 +145,18 @@ router.post('/save', async(req, res)=>{
         ]
 }
 */
-    const resuserId = req.body.userId;
-    const reslist = req.body.list;
+    const requserId = req.body.userId;
+    const reqlist = req.body.list;
+    const date = req.body.date;
+    const resjson = {};
+    resjson.userId = requserId;
+    resjson.list = [];
+    console.log(resjson)
     
-    const user = new user_model(resuserId);
+    const user = new user_model(requserId);
 
-    console.log("resuserId : ",resuserId);
-    console.log("reslist : ",reslist);
+    console.log("resuserId : ",requserId);
+    console.log("reslist : ",reqlist);
 
     let find_userId = await user.findId();
     let userId = find_userId[0][0].id;
@@ -160,21 +165,24 @@ router.post('/save', async(req, res)=>{
     let IsWeekList3 = false;
     let IsWeekList4 = false;
     let IsWeekList5 = false;
-    console.log(userId);
+    //console.log(userId);
     for(let i = 0; i<5; i++){
-        let jsonObject = reslist[i];
+        let jsonObject = reqlist[i];
         let keys = Object.keys(jsonObject);
         let weekNM = keys[0];
         let WeekListID = jsonObject[weekNM];
-        const checklist = new checklist_model(userId, weekNM, 
+        const checklist = new checklist_model(userId,date, weekNM,
                             WeekListID[0], IsWeekList1,
                             WeekListID[1], IsWeekList2,
                             WeekListID[2], IsWeekList3,
                             WeekListID[3], IsWeekList4,
                             WeekListID[4], IsWeekList5);
         await checklist.save();
+
+        
     }
     
+
 
     
     return res.send({ message: 'ok' });
