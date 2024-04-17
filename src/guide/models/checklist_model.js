@@ -26,7 +26,7 @@ module.exports = class CheckList{
         try{
             console.log("db save");
             //만약에 해당 user의 db에 이미 동일한 date가 있으면 그거 바꿔주고 없으면 save
-            let Isdate = await db.execute('select date from checklist where date = ? and weeknumber = ?', [this.date, this.WeekNumber]);
+            let Isdate = await db.execute('select date from checklist where date = ? and weeknumber = ? and userID=?', [this.date, this.WeekNumber,this.UserId]);
             console.log(Isdate[0][0]);
             if(Isdate[0][0]){
                 return await db.execute(`UPDATE checklist SET WeekListID1=?, WeekListID2=?,WeekListID3=?,WeekListID4=?,WeekListID5=?
