@@ -147,9 +147,10 @@ router.post('/save', async(req, res)=>{
 */
     const requserId = req.body.userId;
     const reqlist = req.body.list;
-    const date = req.body.date;
+    const reqdate = req.body.date;
     const resjson = {};
     resjson.userId = requserId;
+    resjson.date = reqdate;
     resjson.list = [];
     console.log(resjson)
     
@@ -171,7 +172,7 @@ router.post('/save', async(req, res)=>{
         let keys = Object.keys(jsonObject);
         let weekNM = keys[0];
         let WeekListID = jsonObject[weekNM];
-        const checklist = new checklist_model(userId,date, weekNM,
+        const checklist = new checklist_model(userId,reqdate, weekNM,
                             WeekListID[0], IsWeekList1,
                             WeekListID[1], IsWeekList2,
                             WeekListID[2], IsWeekList3,
@@ -180,11 +181,29 @@ router.post('/save', async(req, res)=>{
         await checklist.save();
 
         
+        const guide = new guide_model();
+        
+        let guideList = {};
+        
+        guideList[weekNM] = [];
+        for (let i = 0;i<5;i++) {
+            let guidedetail = {};
+            let guide_Id = WeekListID[i];
+            let guide_NM = await guide.findwithguideId(guide_Id);
+            guidedetail.guideId = guide_Id;
+            guidedetail.guideNM = guide_NM[0][0].guide_NM;
+            console.log("guidedetail :", guidedetail);
+            guideList[weekNM].push(guidedetail);
+        }
+        //console.log(guideList);
+        resjson.list.push(guideList);
+        //console.log(resjson);
+        //console.log(A);
     }
     
 
-
+    //console.log(resjson);    
     
-    return res.send({ message: 'ok' });
+    return res.send(resjson);
 })
 module.exports = router;

@@ -45,8 +45,9 @@ module.exports = class Guide{
 
     async findwithguideId(guide_Id){
         try{
-            //console.log(this.category_Id);
+            //console.log("guide_model>> guide_Id : ",guide_Id);
             let guide_NM = await db.execute('SELECT guide_NM FROM guide where guide.guide_Id = ?', [guide_Id]);
+            //console.log("guide_model>> guide_NM : ",guide_NM);
             return guide_NM;
         }
         catch{

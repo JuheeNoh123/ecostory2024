@@ -64,12 +64,4 @@ module.exports = class CheckList{
         }
     }
 
-    async finddate(){
-        try{
-            //return await db.execute('select date from checklist where')
-        }
-        catch{
-            return false;
-        }
-    }
 }
