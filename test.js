@@ -1,25 +1,66 @@
-const fs = require('fs');
-const crypto = require('crypto');
+const { spawn } = require('child_process');
 
-// 키 파일로부터 키를 읽어옴
-const privateKey = fs.readFileSync('./bin/private_key.pem', 'utf8');
-const publicKey = fs.readFileSync('./bin/public_key.pem', 'utf8');
 
-// 데이터 생성
-const data = 'Hello, World!';
+function runPythonScript_2() {
+  const pythonProcess = spawn('python', ['data/database.py']);
 
-// 데이터 암호화
-const encryptedData = crypto.publicEncrypt({
-  key: publicKey,
-  padding: crypto.constants.RSA_PKCS1_PADDING
-}, Buffer.from(data, 'utf-8'));
+  pythonProcess.stdout.on('data', (data) => {
+    //console.log(`파이썬 출력2: ${data}`);
+  });
 
-console.log('Encrypted Data:', encryptedData.toString('base64'));
+  pythonProcess.stderr.on('data', (data) => {
+    //console.error(`파이썬 오류: ${data}`);
+  });
 
-// 데이터 복호화
-const decryptedData = crypto.privateDecrypt({
-  key: privateKey,
-  padding: crypto.constants.RSA_PKCS1_PADDING
-}, encryptedData);
+  pythonProcess.on('close', (code) => {
+    console.log(`파이썬 프로세스 종료, 종료 코드: ${code}`);
 
-console.log('Decrypted Data:', decryptedData.toString('utf-8'));
+  });
+}
+
+
+
+
+// 가짜 데이터를 가져오는 함수 (Promise를 반환)
+function fetchData() {
+  return new Promise((resolve, reject) => {
+    // 비동기 작업 시뮬레이션 (setTimeout 사용)
+
+      const pythonProcess = spawn('python', ['data/data_mean.py']);
+
+      pythonProcess.stdout.on('data', (data) => {
+        //console.log(`파이썬 출력1: ${data}`);
+      });
+
+      pythonProcess.stderr.on('data', (data) => {
+        //console.error(`파이썬 오류: ${data}`);
+        resolve(false);
+      });
+
+      pythonProcess.on('close', (code) => {
+        //console.log(`파이썬 프로세스 종료, 종료 코드: ${code}`);
+        if(code == 0) resolve(true);
+        else resolve(false);
+      });
+
+  });
+}
+
+// async 함수를 사용하여 데이터 가져오기
+async function fetchDataAsync() {
+  try {
+    const data = await fetchData(); // fetchData 함수의 Promise를 기다림
+    console.log("Data received:", data);
+
+    if(data) runPythonScript_2();
+    
+    // 여기서 추가적인 작업을 수행할 수 있습니다.
+    console.log("Additional processing of data:", data);
+    return data;
+  } catch (error) {
+    console.error("Error occurred:", error);
+  }
+}
+
+// fetchDataAsync 함수 호출
+fetchDataAsync();
