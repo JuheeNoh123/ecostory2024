@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "next dev -p 3060",
+    "build": "ANALYZE=true NODE_ENV=production next build",
+    "start": "NODE_ENV=production next start -p 80"
   },
   "author": "",
   "license": "ISC",
