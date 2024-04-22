@@ -128,15 +128,14 @@ ENV/
 env.bak/
 venv.bak/
 
-eco_back/lib
-eco_back/node_modules
+
 #openssl
 bin
-eco_back/bin
+
 openssl.cnf
-eco_back/openssl.cnf
+
 include/openssl
-eco_back/include\openssl
+
 # Spyder project settings
 .spyderproject
 .spyproject
