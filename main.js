@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 3000;
+const port = 8080;
 const cron = require('node-cron');
 const { spawn } = require('child_process');
 
@@ -91,7 +91,10 @@ var makeplanRouter = require('./src/guide/makeplan');
 //app.use(verify);
 app.use('/user',signupRouter);
 app.use('/user',loginRouter);
-app.use('/', dataRouter);
+//app.use('/', dataRouter);
+app.use('/',(req, res) => {
+  res.send('Hello World!')
+})
 app.use('/guide', gptRouter);
 app.use('/guide', makeplanRouter);
 
