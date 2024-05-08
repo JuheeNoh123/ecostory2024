@@ -2,9 +2,9 @@ import pandas as pd
 
 try:
     # 데이터 불러오기
-    data_emission = pd.read_csv('data\data_emission.csv', na_values=[''])  # 기준배출량 등의 데이터
-    data_waste = pd.read_csv('data\data_waste.csv', na_values=[''])  # 음식물류폐기물발생량 등의 데이터
-    data_air = pd.read_csv('data\data_air.csv', na_values=[''])  # 대기오염물질 농도값 등의 데이터
+    data_emission = pd.read_csv('./data_emission.csv', na_values=[''])  # 기준배출량 등의 데이터
+    data_waste = pd.read_csv('./data_waste.csv', na_values=[''])  # 음식물류폐기물발생량 등의 데이터
+    data_air = pd.read_csv('./data_air.csv', na_values=[''])  # 대기오염물질 농도값 등의 데이터
 
     # NaN 값을 적절한 값으로 대체
     data_emission.fillna(data_emission.mean(numeric_only=True), inplace=True)
@@ -57,6 +57,10 @@ try:
                                 labels=['Very Low', 'Low', 'High', 'Very High'])
 
     res = result[['SIGUN_NM', 'Emission_Score', 'Waste_Score', 'Air_Score', 'Total_Score', 'Severity']]
+    
+    # 소수점 아래 5자리까지 저장
+    res = res.round({'Emission_Score': 5, 'Waste_Score': 5, 'Air_Score': 5, 'Total_Score': 5})
+    
     # 결과 출력
     print(res)
     

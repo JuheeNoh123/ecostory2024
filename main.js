@@ -6,9 +6,9 @@ const { spawn } = require('child_process');
 
 
 
-
+/*
 function runPythonScript_2() {
-  const pythonProcess = spawn('python', ['data/database.py']);
+  const pythonProcess = spawn('python3', ['data/database.py']);
 
   pythonProcess.stdout.on('data', (data) => {
     console.log(`파이썬 출력2: ${data}`);
@@ -75,7 +75,7 @@ cron.schedule('10 * * * * *', () => {
   //runPythonScript_2();
 });
 
-
+*/
 
 app.use(express.json());
 app.use(express.urlencoded( {extended : true } ));
@@ -91,10 +91,10 @@ var makeplanRouter = require('./src/guide/makeplan');
 //app.use(verify);
 app.use('/user',signupRouter);
 app.use('/user',loginRouter);
-//app.use('/', dataRouter);
-app.use('/',(req, res) => {
-  res.send('Hello World!')
-})
+app.use('/', dataRouter);
+/*app.use('/',(req, res) => {
+  res.send('노주희 서버 테스트 ^^')
+})*/
 app.use('/guide', gptRouter);
 app.use('/guide', makeplanRouter);
 

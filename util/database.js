@@ -1,7 +1,7 @@
 const mysql = require('mysql2');
 
 require('dotenv').config();
-const { HOST,USER,DATABASE,PASSWORD } = process.env;
+const { DB_HOST,DB_USER,DATABASE,PASSWORD } = process.env;
 
 // 이외에도 createConnection을 통해서도 연결이 가능하다고 합니다.
 // createPool과의 차이는 단일 연결이냐, 복수 연결이냐의 차이입니다.
@@ -11,9 +11,9 @@ const { HOST,USER,DATABASE,PASSWORD } = process.env;
 
 
 const pool = mysql.createPool({
-    host: HOST,
+    host: DB_HOST,
     port: "3306",
-    user: USER,
+    user: DB_USER,
     database: DATABASE,
     password: PASSWORD,
 });

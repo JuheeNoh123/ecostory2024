@@ -17,7 +17,7 @@ router.post('/login', async (req, res) => {
     let user = new reg_model(userid, password);
     const checklogin = await user.login();
     console.log("[login.js > post > login]",user);
-    console.log(privateKey);
+    
     if(checklogin){
         const token = jwt.sign({        
             userid: user.userid      
