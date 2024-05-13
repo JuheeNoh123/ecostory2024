@@ -26,6 +26,7 @@ function makeCategory(category_data){
                     let guide= new guide_model(child,category_Id );
                     await guide.save();
                     console.log("e, child : ",e, child);
+                    
                 })
                 
             })
@@ -40,25 +41,30 @@ function makeCategory(category_data){
 async function addlist(add_data, category_NM){
     try{
         let category= new category_model(category_NM);
-        //console.log(add_data);
         let category_Id = await category.find();
-        //console.log(category_Id['category_Id']);
-        response=JSON.parse(add_data);
-        title=Object.keys(response); //생활
-        //console.log(title); //['친환경을 위한 요소']
-        let result = [];
+        const response=JSON.parse(add_data);
+        console.log("response : ", response);
+        const title=Object.keys(response); //생활
+        console.log("title : ", title);
+        let promises = []; // 가이드 저장을 위한 프로미스 배열
         
-        title.forEach(async element => {
-            response[element].forEach(async (value, index)=>{
-                let guide= new guide_model(value, category_Id['category_Id']);
-                let save = await guide.save();  
-                console.log("db save : " , save);               
-            })
-            
-        })
-        //console.log("response[category_NM]: \n",response[category_NM]);
+        for (let element of title) {
+            console.log("element : ", element);
+            for (let value of response[element]) {
+                const guide = new guide_model(value, category_Id['category_Id']);
+                await guide.save();
+                console.log("value : ",value);
+                promises.push(value);
+            }
+        }
+
+        // 모든 가이드가 성공적으로 저장될 때까지 기다림
+        await Promise.all(promises);
+        console.log("모든 가이드가 성공적으로 저장됨", results);
+
         result = response[category_NM];
         return result;
+
     }
     catch(error){
         console.error('에러 : ', error);
@@ -126,7 +132,7 @@ router.get('/view', async(req, res)=>{
     }
     res.send(viewList);
 })
-
+/*
 router.post('/askmore', async (req, res)=>{
     
     const prompt = req.body.prompt;
@@ -136,26 +142,50 @@ router.post('/askmore', async (req, res)=>{
         console.log(response["content"]);
         add_data = await addlist(response["content"], category_NM);
         var data = [];
-        for(let i=0;i<add_data.length;i++){
+        for (let i = 0; i < add_data.length; i++) {
             let guide = new guide_model();
             let guide_Id_list = await guide.findwithguide_NM(add_data[i]);
-            //console.log(guide_Id_list);
+            console.log("guide_Id_list", guide_Id_list);
+            if (!Array.isArray(guide_Id_list) || guide_Id_list.length === 0 || !Array.isArray(guide_Id_list[0]) || guide_Id_list[0].length === 0 || !guide_Id_list[0][0].guide_Id) {
+                console.error("guide_Id를 찾을 수 없습니다.");
+                continue; // 다음 반복으로 넘어감
+            }
+        
             let guide_Id = guide_Id_list[0][0].guide_Id;
             var jsonObject = {
                 'guide_Id': guide_Id,
                 'guide_NM': add_data[i]
-            }
-
+            };
             data.push(jsonObject);
-            
         }
-        console.log("data : ",data);
+        
         res.json(data);
-        //res.send("db 저장 완료?");
+        
     }
     else{
         res.status(500).json({'error':'Failed to get response from ChatGPT API'});
     }
     
 })
+*/
+router.post('/askmore', async (req, res) => {
+    const prompt = req.body.prompt;
+    const category_NM = req.body.category_NM;
+    
+    try {
+        const response = await callChatGPT(prompt);
+        if (!response) {
+            return res.status(500).json({'error': 'Failed to get response from ChatGPT API'});
+        }
+
+        const addedGuides = await addlist(response["content"], category_NM);
+        res.json(addedGuides);
+    } catch (error) {
+        console.error('에러 : ', error);
+        res.status(500).json({'error': 'An error occurred while processing the request.'});
+    }
+});
+
+
+
 module.exports = router;

@@ -11,14 +11,18 @@ module.exports = class Guide{
     
     try{
         console.log(this.category_Id,this.guide);
-        return await db.execute(
+        
+        
+        let save = await db.execute(
             'INSERT INTO guide (category_Id, guide_NM) VALUES (?,?)',
             [this.category_Id,this.guide]
         );
-
+        console.log("가이드db저장 완료");
+        return save
     }
     catch{
-        return false;
+        console.error('가이드 저장 중 오류 발생:', error);
+        throw error;
     }
 
     }   
@@ -58,6 +62,7 @@ module.exports = class Guide{
     async findwithguide_NM(guide_NM){
         try{
             let guide_Id = await db.execute('SELECT guide_Id from guide where guide.guide_NM = ?',[guide_NM]);
+            console.log("guide_ID :", guide_Id);
             return guide_Id;
         }
         catch{

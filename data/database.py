@@ -2,7 +2,7 @@ import time
 import pymysql
 from dotenv import load_dotenv
 import os
-from ecodata import res  
+from ecodata import res
 from apscheduler.schedulers.background import BackgroundScheduler
 
 
