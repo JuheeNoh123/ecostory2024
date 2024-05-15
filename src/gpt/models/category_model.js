@@ -24,6 +24,7 @@ module.exports = class Category{
     async find() {
         try{
             let category_Id = await db.execute('SELECT category_Id FROM category where category.category_NM = ?', [this.category]);
+            console.log("category_Id[0][0]:", category_Id[0][0])
             return category_Id[0][0];
         }
         catch {

@@ -11,16 +11,16 @@ module.exports = class Guide{
     
     try{
         console.log(this.category_Id,this.guide);
-        
-        
+        //this.guide = Buffer.from(this.guide).toString('utf8');
+        //this.category_Id = Buffer.from(this.category_Id).toString('utf8');
         let save = await db.execute(
-            'INSERT INTO guide (category_Id, guide_NM) VALUES (?,?)',
+            'INSERT INTO guide (category_Id, guide_NM) VALUES (?,?) ON DUPLICATE KEY UPDATE guide_NM = VALUES(guide_NM)',
             [this.category_Id,this.guide]
         );
         console.log("가이드db저장 완료");
         return save
     }
-    catch{
+    catch(error){
         console.error('가이드 저장 중 오류 발생:', error);
         throw error;
     }
