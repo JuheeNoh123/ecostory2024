@@ -50,6 +50,6 @@ module.exports = class User {
 
     async findId(){
         let userId = await db.execute('select id from user where userId = ?', [this.userid]);
-        return userId;
+        return userId[0][0];
     }
 };

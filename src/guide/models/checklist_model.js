@@ -24,19 +24,30 @@ module.exports = class CheckList{
 
     async save(){
         try{
-            console.log("db save");
+            console.log(this.UserId, this.date,this.WeekNumber,
+                this.WeekListID1,
+                this.IsWeekList1,
+                this.WeekListID2,
+                this.IsWeekList2,
+                this.WeekListID3,
+                this.IsWeekList3,
+                this.WeekListID4,
+                this.IsWeekList4,
+                this.WeekListID5,
+                this.IsWeekList5);
             //만약에 해당 user의 db에 이미 동일한 date가 있으면 그거 바꿔주고 없으면 save
-            let Isdate = await db.execute('select date from checklist where date = ? and weeknumber = ? and userID=?', [this.date, this.WeekNumber,this.UserId]);
+            let Isdate = await db.execute('select date from checklist where date = ? and WeekNumber = ? and UserID=?', [this.date, this.WeekNumber,this.UserId]);
             console.log(Isdate[0][0]);
             if(Isdate[0][0]){
                 return await db.execute(`UPDATE checklist SET WeekListID1=?, WeekListID2=?,WeekListID3=?,WeekListID4=?,WeekListID5=?
-                WHERE date = ? and weeknumber = ?`,
+                WHERE date = ? and WeekNumber = ?`,
                 [this.WeekListID1,this.WeekListID2,this.WeekListID3,this.WeekListID4,this.WeekListID5, this.date, this.WeekNumber]
                 )
             }
             else{
+                console.log("db save");
                 return await db.execute(
-                    `Insert Into CheckList 
+                    `Insert Into checklist 
                         (UserId,date,WeekNumber,
                         WeekListID1, IsWeekList1, 
                         WeekListID2, IsWeekList2,
@@ -59,7 +70,8 @@ module.exports = class CheckList{
             }
             
         }
-        catch{
+        catch(err){
+            console.error('Error during save:', err);
             return false;
         }
     }

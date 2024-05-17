@@ -7,6 +7,7 @@ const user_model = require('../signup/models/reg_model');
 const sum = [];
 const final_list = [];
 
+
 async function randomInt(min, max){ 
     // console.log("min: ", min);
     // console.log("max: ", max);
@@ -27,21 +28,78 @@ async function shuffle(array) {
 }
   
 async function splitweeks(final_list){
-    let transformedData = [];
-    const groupedByFive = [];
+    let transformedData = {
+        "list":[]
+    };
+
     let count = 1;
 
     for (let i = 0; i < final_list.length; i += 5) {
         const group = {};
-        group[count++] = final_list.slice(i, i + 5).map((item, index) => ({[`${index + 1}`]: item.guide_NM}));
-        groupedByFive.push(group);
+        group[count++] = final_list.slice(i, i + 5);
+        transformedData.list.push(group);
     }
     
-    transformedData = JSON.stringify(groupedByFive);
     return transformedData;
 
 }
 
+
+async function save(list,date, user_Id){
+    /*
+    [
+        { '1': [ 612, 572, 614, 445, 429 ] },
+        ...
+    ]
+    */
+    const user = new user_model(user_Id,'','');
+    let userId = await user.findId();
+    console.log(userId);
+    userId = userId['id']
+    console.log(userId);
+
+    let IsWeekList1 = false;
+    let IsWeekList2 = false;
+    let IsWeekList3 = false;
+    let IsWeekList4 = false;
+    let IsWeekList5 = false;
+    console.log(list);
+    for(let i = 0; i<5; i++){
+        let jsonObject = list.list[i];
+        console.log("jsonObject",jsonObject);
+        let keys = Object.keys(jsonObject);
+        let weekNM = keys[0];
+        let WeekListID = jsonObject[weekNM];
+        const checklist = new checklist_model(userId,date, weekNM,
+                            WeekListID[0], IsWeekList1,
+                            WeekListID[1], IsWeekList2,
+                            WeekListID[2], IsWeekList3,
+                            WeekListID[3], IsWeekList4,
+                            WeekListID[4], IsWeekList5);
+        await checklist.save();
+
+        
+        //const guide = new guide_model();
+        
+        //let guideList = {};
+        
+        //guideList[weekNM] = [];
+        // for (let i = 0;i<5;i++) {
+        //     let guidedetail = {};
+        //     let guide_Id = WeekListID[i];
+        //     let guide_NM = await guide.findwithguideId(guide_Id);
+        //     guidedetail.guideId = guide_Id;
+        //     guidedetail.guideNM = guide_NM[0][0].guide_NM;
+        //     console.log("guidedetail :", guidedetail);
+        //     guideList[weekNM].push(guidedetail);
+        // }
+        //console.log(guideList);
+        //resjson.list.push(guideList);
+        //console.log(resjson);
+        //console.log(A);
+    }
+    
+}
 router.post('/makeplan', async(req,res)=>{
     /*
     req
@@ -54,43 +112,61 @@ router.post('/makeplan', async(req,res)=>{
         
     }
     */
+    const userId = req.body.userId;
+    const date = req.body.date;
+    console.log(userId);
+    let user = new user_model(userId);
+    let Isuser = await user.find();
+    if(!Isuser){
+        res.send("등록되지 않은 ID 입니다.");
+    }
     const guide_list = req.body.checklist.guide_Id;
     const listcnt= guide_list.length;
     const category_Id = req.body.checklist.category_Id;
     const category_cnt = category_Id.length;
     
     for(let i=0;i<guide_list.length;i++){
-        let guide = new guide_model();
-        const add_guideNM = await guide.findwithguideId(guide_list[i]);
-        final_list.push(add_guideNM[0][0]);
+        //let guide = new guide_model();
+        //const add_guideNM = await guide.findwithguideId(guide_list[i]);
+        console.log(guide_list[i]);
+        final_list.push(guide_list[i]);
     }
-
+    console.log(final_list)
     if(listcnt<25){
         for(let i=0;i<category_cnt;i++){
-            let guide = new guide_model('', category_Id[i]); 
+            let guide = new guide_model('', category_Id[i]);
             const extra_guide = await guide.findwithcategoryId();
-            const pr_extra_guide = extra_guide[0];
-            //console.log(pr_extra_guide);        //배열 이쁘게 만들어주기
-            sum.push(pr_extra_guide);       //하나의 배열로 합쳐주기
+            console.log(extra_guide);
+            sum.push(extra_guide);
         }
+        console.log(sum)
         let cnt = 0;
         while(cnt<(25-listcnt)){
             const idx1 = await randomInt(0, category_cnt-1);
             const idx2 = await randomInt(0, sum[idx1].length-1);
             console.log(idx1, idx2);
             cnt++;
-            final_list.push(sum[idx1][idx2]);
+            final_list.push(sum[idx1][idx2].guide_Id);
         }
     }
     console.log("전\n",final_list);
 
     await shuffle(final_list);
 
-    //console.log('후\n',final_list);
+    console.log('후\n',final_list);
     //console.log(final_list.length);
     
-    const transformedData = await splitweeks(final_list);
-    res.send(transformedData);
+    const splitData_list = await splitweeks(final_list);
+
+    await save(splitData_list, date, userId);
+
+    const week = req.body.week;
+    const sidebar = splitData_list.list[week-1];   // guide_nm으로 불러와야함
+
+    
+    console.log(sidebar);
+
+    res.send(sidebar);
     
 })
 
