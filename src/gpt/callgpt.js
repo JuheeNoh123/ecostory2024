@@ -81,13 +81,16 @@ async function addlist(add_data, category_NM){
 }
 
 function findIndexByGuideId(array, guideId) {
+    console.log(array.length);
     for (let i = 0; i < array.length; i++) {
       if (array[i].guide_Id == guideId) {
-        return i; // "guide_Id"가 "1"인 요소의 인덱스 반환
+        console.log(array[i].guide_Id , i);
+        if(i==0) return i;
+        return i+1; // "guide_Id"가 "1"인 요소의 인덱스 반환
       }
     }
     return -1; // "guide_Id"가 "1"인 요소가 없는 경우 -1 반환
-  }
+}
 
 
 router.post('/ask', async (req, res)=>{
@@ -146,7 +149,27 @@ router.post('/ask', async (req, res)=>{
 //카테고리 리스트 출력 라우터
 router.get('/viewmain', async(req,res)=>{
     const category = new category_model();
+    
     const category_data = await category.findAll();
+    let guide_Idx=0;
+    for (let i=0;i<category_data[0].length;i++){
+        let guide= new guide_model('',category_data[0][i].category_Id);
+        let guidelist_view = await guide.findwithcategoryId();
+        let guideNM_list = []
+        for (let j=0;j<10;j++){
+            guide_Idx = guidelist_view[j].guide_Id;
+            let guide_NM = await guide.findwithguideId(guide_Idx);
+            guideNM_list.push({
+                guide_Id:guide_Idx,
+                guide_NM:guide_NM[0][0].guide_NM
+            })
+        }
+        category_data[0][i].guide_NM = guideNM_list;
+        
+        
+    }
+    
+    
     res.send(category_data[0]);
 })
 
@@ -162,20 +185,22 @@ router.get('/view', async(req, res)=>{
     const category_Id = req.body.category_Id;
     let viewList = [];
     let guide= new guide_model('',category_Id);
-    guidelist_view = await guide.findwithcategoryId();
-    console.log(guidelist_view[0]);
-    let startIndex = findIndexByGuideId(guidelist_view[0], end_guide_Id)+1;
+    let guidelist_view = await guide.findwithcategoryId();
+    
+    console.log(guidelist_view);
+    let startIndex = findIndexByGuideId(guidelist_view, end_guide_Id);
     console.log(startIndex);
     for(let i=0;i<10;i++){
-        if(guidelist_view[0][startIndex]==undefined)break
-        const guide_Id = guidelist_view[0][startIndex].guide_Id;
-        const guide_NM = guidelist_view[0][startIndex].guide_NM;
-        console.log(guide_Id,guide_NM);
+        if(guidelist_view[startIndex]==undefined)break
+        const guide_Id = guidelist_view[startIndex].guide_Id;
+        const guide_NM = await guide.findwithguideId(guide_Id);
+        console.log(guide_Id,guide_NM[0][0]['guide_NM']);
         
         let viewJson = {
             "guide_Id" : guide_Id,
-            "guide_NM" : guide_NM
+            "guide_NM" : guide_NM[0][0]['guide_NM']
         };
+
         viewList.push(viewJson);
         startIndex++;
     }
