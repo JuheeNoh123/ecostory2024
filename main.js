@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 8080;
+const port = 8000;
 const cron = require('node-cron');
 const { spawn } = require('child_process');
 const cors = require('cors')
