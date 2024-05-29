@@ -3,7 +3,7 @@ const app = express();
 const port = 8080;
 const cron = require('node-cron');
 const { spawn } = require('child_process');
-
+const cors = require('cors')
 
 
 /*
@@ -87,6 +87,7 @@ var dataRouter = require('./src/ecodata/ecodata');
 var gptRouter = require('./src/gpt/callgpt');
 //var verify = require('./src/signup/verify');
 var makeplanRouter = require('./src/guide/makeplan');
+var checklistRouter = require('./src/guide/checklist')
 
 //app.use(verify);
 app.use('/user',signupRouter);
@@ -97,8 +98,14 @@ app.use('/', dataRouter);
 })*/
 app.use('/guide', gptRouter);
 app.use('/guide', makeplanRouter);
-
+app.use('/checklist', checklistRouter);
 //app.use('/',indexRouter);
+
+app.use(cors({
+  origin: true,
+  optionsSuccessStatus: 200,
+  credentials:true
+}))
 
 app.listen(port,async () => {
   console.log(`Example app listening on port ${port}`);

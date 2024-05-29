@@ -342,4 +342,45 @@ router.get('/sidebar', async(req, res)=>{
     res.send(ans[0][0]);
 
 })
+
+/*
+{
+	"userId":"njh",
+	"month":5,
+	"week":1,
+	"IsWeekList1": 1,
+	"IsWeekList2": 0,
+	"IsWeekList3": 0,
+	"IsWeekList4": 0,
+	"IsWeekList5": 0
+}
+*/
+router.put('/savesidebar', async(req,res)=>{
+    let userId = req.body.userId;
+    const month = req.body.month;
+    const week = req.body.week;
+
+    const IsWeekList1 = req.body.IsWeekList1;
+    const IsWeekList2 = req.body.IsWeekList2;
+    const IsWeekList3 = req.body.IsWeekList3;
+    const IsWeekList4 = req.body.IsWeekList4;
+    const IsWeekList5 = req.body.IsWeekList5;
+    
+    const user = new user_model(userId,'','')
+    userId = await user.findId();
+    userId = userId.id;
+    
+    const checklist = new checklist_model(userId, month, week, 
+                        '',IsWeekList1,
+                        '',IsWeekList2,
+                        '',IsWeekList3,
+                        '',IsWeekList4,
+                        '',IsWeekList5,)
+    
+    const ans = await checklist.updateIsweekList();
+    console.log(ans);
+    res.send('OK');
+})
+
+
 module.exports = router;

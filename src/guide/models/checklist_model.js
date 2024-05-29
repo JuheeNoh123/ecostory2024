@@ -98,6 +98,18 @@ module.exports = class CheckList{
         return res;
     }
 
+    async findAll(){
+        let query = `select WeekListID1, IsWeekList1,
+                    WeekListID2, IsWeekList2,
+                    WeekListID3, IsWeekList3,
+                    WeekListID4, IsWeekList4,
+                    WeekListID5 , IsWeekList5
+                    from checklist where date = ? and UserID=? and WeekNumber = ?;`
+        let params = [this.date,this.UserId, this.WeekNumber]
+        let res = await db.execute(query, params);
+        return res;
+    }
+
     async sidebar(){
         try{
             let query = `SELECT c.WeekNumber, 
@@ -123,5 +135,24 @@ module.exports = class CheckList{
             return false;
         }
 
+    }
+
+    async updateIsweekList(){
+        try{
+            let query = `Update checklist 
+                        set IsWeekList1= ?,
+                        IsWeekList2=?,
+                        IsWeekList3=?,
+                        IsWeekList4=?,
+                        IsWeekList5=? 
+                        where UserId = ? and date = ? and WeekNumber=?`
+            let params = [this.IsWeekList1,this.IsWeekList2, this.IsWeekList3, this.IsWeekList4, this.IsWeekList5, this.UserId, this.date, this.WeekNumber]
+            let res = await db.execute(query, params);
+            return res;
+        }
+        catch(err){
+            console.error('error:', err);
+            return false;
+        }
     }
 }
