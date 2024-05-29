@@ -102,8 +102,8 @@ app.use('/checklist', checklistRouter);
 //app.use('/',indexRouter);
 
 app.use(cors({
-  origin: true,
-  optionsSuccessStatus: 200,
+  origin: 'http://127.0.0.1:3000',
+  //optionsSuccessStatus: 200,
   credentials:true
 }))
 
