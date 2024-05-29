@@ -76,6 +76,11 @@ cron.schedule('10 * * * * *', () => {
 });
 
 */
+app.use(cors({
+  origin: 'http://127.0.0.1:3000',
+  //optionsSuccessStatus: 200,
+  credentials:true
+}))
 
 app.use(express.json());
 app.use(express.urlencoded( {extended : true } ));
@@ -101,11 +106,7 @@ app.use('/guide', makeplanRouter);
 app.use('/checklist', checklistRouter);
 //app.use('/',indexRouter);
 
-app.use(cors({
-  origin: 'http://127.0.0.1:3000',
-  //optionsSuccessStatus: 200,
-  credentials:true
-}))
+
 
 app.listen(port,async () => {
   console.log(`Example app listening on port ${port}`);
