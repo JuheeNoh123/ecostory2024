@@ -103,7 +103,7 @@ app.use('/checklist', checklistRouter);
 
 
 app.get('/test-cors', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Origin', 'true');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.send('CORS headers set');
 });
