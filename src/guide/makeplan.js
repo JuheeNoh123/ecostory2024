@@ -319,7 +319,7 @@ router.post('/delete', async(req,res)=>{
 //     return res.send(resjson);
 // })
 
-router.get('/checklist', async(req,res)=>{
+router.post('/checklist', async(req,res)=>{
     let userID = req.body.userId;
     const user= new user_model(userID,'','');
     userID = await user.findId();
@@ -329,7 +329,7 @@ router.get('/checklist', async(req,res)=>{
     res.send(ans);
 })
 
-router.get('/sidebar', async(req, res)=>{
+router.post('/sidebar', async(req, res)=>{
     const week = req.body.week;
     const date = req.body.month;
     let user = req.body.userId;

@@ -174,7 +174,7 @@ router.get('/viewmain', async(req,res)=>{
 })
 
 //10개씩 끊어서 보여주는 라우터
-router.get('/view', async(req, res)=>{
+router.post('/view', async(req, res)=>{
     /*
     {
 	"end_guide_Id":0,

@@ -5,7 +5,7 @@ const guide_model = require('../gpt/models/guide_model');
 const checklist_model = require('./models/checklist_model');
 const user_model = require('../signup/models/reg_model');
 
-router.get('/show', async(req, res)=>{
+router.post('/show', async(req, res)=>{
     let userId = req.body.userId;
     const month = req.body.month;
     const WeekNumber= req.body.WeekNumber;
