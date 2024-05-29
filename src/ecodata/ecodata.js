@@ -12,3 +12,4 @@ router.get('/ecodata', async(req, res) => {
     
     return res.status(200).send(sigun);
 });
+module.exports = router;
