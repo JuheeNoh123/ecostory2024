@@ -12,9 +12,3 @@ router.get('/ecodata', async(req, res) => {
     
     return res.status(200).send(sigun);
 });
-router.get('/test-cors', (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.send('CORS headers set');
-  });
-module.exports = router;
