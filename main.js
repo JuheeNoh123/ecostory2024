@@ -102,11 +102,7 @@ app.use('/guide', makeplanRouter);
 app.use('/checklist', checklistRouter);
 
 
-app.get('/test-cors', (req, res) => {
-  // res.setHeader('Access-Control-Allow-Origin', '*');
-  // res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.send('CORS headers set');
-});
+
 
 
 app.listen(port,async () => {
