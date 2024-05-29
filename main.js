@@ -77,7 +77,7 @@ cron.schedule('10 * * * * *', () => {
 
 */
 app.use(cors({
-  origin: 'http://127.0.0.1:3000',
+  origin: true,
   //optionsSuccessStatus: 200,
   credentials:true
 }))
