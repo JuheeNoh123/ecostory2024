@@ -77,10 +77,9 @@ cron.schedule('10 * * * * *', () => {
 
 */
 app.use(cors({
-  origin: true,
-  //optionsSuccessStatus: 200,
-  credentials:true
-}))
+  origin: true, // 허용할 도메인
+  credentials: true
+}));
 
 app.use(express.json());
 app.use(express.urlencoded( {extended : true } ));
@@ -98,15 +97,16 @@ var checklistRouter = require('./src/guide/checklist')
 app.use('/user',signupRouter);
 app.use('/user',loginRouter);
 app.use('/', dataRouter);
-/*app.use('/',(req, res) => {
-  res.send('노주희 서버 테스트 ^^')
-})*/
 app.use('/guide', gptRouter);
 app.use('/guide', makeplanRouter);
 app.use('/checklist', checklistRouter);
-//app.use('/',indexRouter);
 
 
+app.get('/test-cors', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.send('CORS headers set');
+});
 
 app.listen(port,async () => {
   console.log(`Example app listening on port ${port}`);
