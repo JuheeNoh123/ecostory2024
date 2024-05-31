@@ -191,7 +191,14 @@ router.post('/view', async(req, res)=>{
     let startIndex = findIndexByGuideId(guidelist_view, end_guide_Id);
     console.log(startIndex);
     for(let i=0;i<10;i++){
-        if(guidelist_view[startIndex]==undefined)break
+        if(guidelist_view[startIndex]==undefined){
+            let viewJson = {
+                "Isend" : "true"
+            };
+    
+            viewList.push(viewJson);
+            break
+        }
         const guide_Id = guidelist_view[startIndex].guide_Id;
         const guide_NM = await guide.findwithguideId(guide_Id);
         console.log(guide_Id,guide_NM[0][0]['guide_NM']);
