@@ -27,6 +27,17 @@ module.exports = class User {
         return user[0][0];
     }
 
+    async findName(){
+        let name = await db.execute('SELECT name FROM user where user.userid = ?',[this.userid]);
+        return name[0][0];
+    }
+
+    async findImage(){
+        let name = await db.execute('SELECT userImage FROM user where user.userid = ?',[this.userid]);
+        return name[0][0];
+    }
+
+
     async login() {
 	 // 사용자가 제공한 비밀번호
         const userProvidedPassword = this.pw;

@@ -263,6 +263,10 @@ router.post('/sidebar', async(req, res)=>{
     console.log(user)
     const checklist = new checklist_model(user.id, date, week);
     let ans = await checklist.sidebar();
+    let user_name = await usermodel.findName();
+    ans[0][0].user= user_name.name;
+    let user_image = await usermodel.findImage();
+    ans[0][0].image= user_image.userImage;
     res.send(ans[0][0]);
 
 })
