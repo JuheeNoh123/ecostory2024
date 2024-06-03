@@ -33,11 +33,12 @@ router.post('/show', async(req, res)=>{
     userId = await user.findId();
     userId = userId.id; //12 (njh)
 
-    result = []
-
+    let result = []
+ 
     
     const guide = new guide_model();
     for (let i=1; i<=WeekNumber; i++){
+        let cnt = 0;
         const checklist = new checklist_model(userId, month, i);
         let mychecklist = await checklist.findAll();
         let jsoncheck = {
@@ -48,16 +49,18 @@ router.post('/show', async(req, res)=>{
         result.push(jsoncheck);
         for(let j=1;j<=5;j++){
             let IsWeekList = mychecklist[0][0][`IsWeekList${j}`];
-            if(IsWeekList==1) { result[i-1].success.push(mychecklist[0][0][`WeekListID${j}`]); }
-            else {result[i-1].fail.push(mychecklist[0][0][`WeekListID${j}`]);}
+            let WeekList_guide= await guide.findwithguideId(mychecklist[0][0][`WeekListID${j}`]);
+            WeekList_guide = WeekList_guide[0][0].guide_NM;
+            if(IsWeekList==1) { 
+                result[i-1].success.push(WeekList_guide); 
+                cnt += 1;
+            }
+            else {result[i-1].fail.push(WeekList_guide);}
         }
         
-        console.log(result);
+        result[i-1].rate = cnt*20;
     }
-    
-    
-
-    res.send("확인 중 ^^")
+    res.send(result);
 })
 
 module.exports = router;
