@@ -59,10 +59,14 @@ async function addlist(add_data, category_NM){
         for (let element of title) {
             console.log("element : ", element);
             for (let value of response[element]) {
+                let guide_json = {};
                 const guide = new guide_model(value, category_Id['category_Id']);
                 await guide.save();
                 console.log("value : ",value);
-                promises.push(value);
+                const guide_Id = await guide.findwithguide_NM(value);
+                guide_json.guide_Id = guide_Id[0][0].guide_Id;
+                guide_json.guide_NM = value;
+                promises.push(guide_json);
             }
         }
 
@@ -70,8 +74,8 @@ async function addlist(add_data, category_NM){
         await Promise.all(promises);
         console.log("모든 가이드가 성공적으로 저장됨", promises);
 
-        result = response[category_NM];
-        return result;
+        // result = response[category_NM];
+        return promises;
 
     }
     catch(error){
