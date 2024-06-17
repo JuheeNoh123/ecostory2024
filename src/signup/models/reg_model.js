@@ -41,11 +41,11 @@ module.exports = class User {
     async login() {
 	 // 사용자가 제공한 비밀번호
         const userProvidedPassword = this.pw;
-        console.log("userProvidedPassword > ",userProvidedPassword);
+        //console.log("userProvidedPassword > ",userProvidedPassword);
         // 데이터베이스에서 사용자의 해시된 비밀번호 가져오기
         const [userData] = await db.execute('SELECT userid, pw, name FROM user WHERE userid = ?', [this.userid]);
         const storedHashedPassword = userData[0].pw;
-        console.log("storedHashedPassword > ",storedHashedPassword);
+        //console.log("storedHashedPassword > ",storedHashedPassword);
         // bcrypt.compare() 함수를 사용하여 비밀번호 비교
         const isMatch = await bcrypt.compare(userProvidedPassword, storedHashedPassword);
 

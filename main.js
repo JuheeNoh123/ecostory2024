@@ -89,16 +89,20 @@ var signupRouter = require('./src/signup/register');
 var loginRouter = require('./src/signup/login');
 var dataRouter = require('./src/ecodata/ecodata');
 var gptRouter = require('./src/gpt/callgpt');
-//var verify = require('./src/signup/verify');
+var verify = require('./src/signup/verify');
 var makeplanRouter = require('./src/guide/makeplan');
-var checklistRouter = require('./src/guide/checklist')
+var checklistRouter = require('./src/guide/checklist');
+var userRouter = require('./src/signup/user');
 
-//app.use(verify);
+
 app.use('/user',signupRouter);
 app.use('/user',loginRouter);
+app.use('/user', userRouter);
 app.use('/', dataRouter);
 app.use('/guide', gptRouter);
+//app.use('/guide', verify,makeplanRouter);
 app.use('/guide', makeplanRouter);
+//app.use('/checklist', verify, checklistRouter);
 app.use('/checklist', checklistRouter);
 
 
