@@ -24,8 +24,9 @@ const user_model = require('../signup/models/reg_model');
 	},					 
 ]
 */
-router.post('/show', async(req, res)=>{
-    let userId = req.body.userId;   //njh
+router.post('/show/:userid', async(req, res)=>{
+    //let userId = req.body.userId;   //njh
+    let userId = req.params.userid;   //njh
     const month = req.body.month;   //5
     const WeekNumber= req.body.WeekNumber;  //2
 

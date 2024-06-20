@@ -111,7 +111,7 @@ async function show_checklist(userId, date){
     console.log(week);
     return week;
 }
-router.post('/makeplan', async(req,res)=>{
+router.post('/makeplan/:userid', async(req,res)=>{
     /*
     {
 		"userId":"njh",
@@ -123,7 +123,8 @@ router.post('/makeplan', async(req,res)=>{
         }
     }
     */
-    const userId = req.body.userId;
+    //const userId = req.body.userId;
+    const userId = req.params.userid;   
     const date = req.body.date;
     console.log(userId);
     let user = new user_model(userId);
@@ -179,7 +180,7 @@ router.post('/makeplan', async(req,res)=>{
     
 })
 
-router.post('/delete', async(req,res)=>{
+router.post('/delete/:userid', async(req,res)=>{
 /*
 {
 	"userid":"njh",
@@ -210,7 +211,8 @@ router.post('/delete', async(req,res)=>{
 }
 */
     const del_list = req.body.list;
-    let userID = req.body.userId;
+    //let userID = req.body.userId;
+    let userID = req.params.userid;
     const date = req.body.month;
     const now_week = req.body.now_week;
     const guide = new guide_model();
@@ -243,8 +245,9 @@ router.post('/delete', async(req,res)=>{
 })
 
 
-router.post('/checklist', async(req,res)=>{
-    let userID = req.body.userId;
+router.post('/checklist/:userid', async(req,res)=>{
+    let userID = req.params.userid;   //njh
+    //let userID = req.body.userId;
     const user= new user_model(userID,'','');
     userID = await user.findId();
     let date = req.body.month;
@@ -253,10 +256,11 @@ router.post('/checklist', async(req,res)=>{
     res.send(ans);
 })
 
-router.post('/sidebar', async(req, res)=>{
+router.post('/sidebar/:userid', async(req, res)=>{
+    let user = req.params.userid;   //njh
     const week = req.body.week;
     const date = req.body.month;
-    let user = req.body.userId;
+    //let user = req.body.userId;
     console.log(user, date, week)
     const usermodel = new user_model(user);
     user = await usermodel.findId();
@@ -283,8 +287,9 @@ router.post('/sidebar', async(req, res)=>{
 	"IsWeekList5": 0
 }
 */
-router.put('/savesidebar', async(req,res)=>{
-    let userId = req.body.userId;
+router.put('/savesidebar/:userid', async(req,res)=>{
+    let userId = req.params.userid;   //njh
+    //let userId = req.body.userId;
     const month = req.body.month;
     const week = req.body.week;
 
