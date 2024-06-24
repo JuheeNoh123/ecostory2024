@@ -233,7 +233,14 @@ router.delete('/delete', verify, async(req,res)=>{
 
         console.log(del_list,userID,date )
         // 리다이렉트
-        res.redirect(`delete/${userID}`);
+        // 세션 저장 후 리다이렉트
+        req.session.save((err) => {
+            if (err) {
+                console.error("Error saving session:", err);
+                return res.status(500).send("Internal Server Error");
+            }
+            res.redirect(`/guide/delete/${userID}`);
+        });
     } catch (error) {
         console.error("Error occurred:", error);
         res.status(500).send("Internal Server Error");
@@ -321,7 +328,14 @@ router.post('/checklist', verify, async(req,res)=>{
 
         console.log(userID,date )
         // 리다이렉트
-        res.redirect(`checklist/${userID}`);
+        // 세션 저장 후 리다이렉트
+        req.session.save((err) => {
+            if (err) {
+                console.error("Error saving session:", err);
+                return res.status(500).send("Internal Server Error");
+            }
+            res.redirect(`/guide/checklist/${userID}`);
+        });
     } catch (error) {
         console.error("Error occurred:", error);
         res.status(500).send("Internal Server Error");
@@ -356,7 +370,14 @@ router.post('/sidebar', verify, async(req,res)=>{
 
         console.log(user,date,week )
         // 리다이렉트
-        res.redirect(`sidebar/${user}`);
+        // 세션 저장 후 리다이렉트
+        req.session.save((err) => {
+            if (err) {
+                console.error("Error saving session:", err);
+                return res.status(500).send("Internal Server Error");
+            }
+            res.redirect(`/guide/sidebar/${user}`);
+        });
     } catch (error) {
         console.error("Error occurred:", error);
         res.status(500).send("Internal Server Error");
@@ -404,8 +425,14 @@ router.put('/savesidebar', verify, async(req,res)=>{
         req.session.IsWeekList4 = IsWeekList4;
         req.session.IsWeekList5 = IsWeekList5;
 
-        // 리다이렉트
-        res.redirect(`savesidebar/${userId}`);
+        // 세션 저장 후 리다이렉트
+        req.session.save((err) => {
+            if (err) {
+                console.error("Error saving session:", err);
+                return res.status(500).send("Internal Server Error");
+            }
+            res.redirect(`/guide/savesidebar/${userId}`);
+        });
     } catch (error) {
         console.error("Error occurred:", error);
         res.status(500).send("Internal Server Error");

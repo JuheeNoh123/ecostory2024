@@ -82,6 +82,10 @@ app.use(cors({
   origin: true, // 허용할 도메인
   credentials: true
 }));
+
+app.use(express.json());
+app.use(express.urlencoded( {extended : true } ));
+
 const sessionSecret = process.env.SESSION_SECRET;
 app.use(session({
   secret:sessionSecret, // 세션을 서명하기 위한 비밀키, 암호화에 사용됨
@@ -90,8 +94,7 @@ app.use(session({
   cookie: { secure: false } // 쿠키 설정 (https가 아닌 환경에서는 false)
 }));
 
-app.use(express.json());
-app.use(express.urlencoded( {extended : true } ));
+
 
 
 var signupRouter = require('./src/signup/register');

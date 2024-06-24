@@ -17,8 +17,14 @@ router.post('/show', verify, async(req,res)=>{
         req.session.month = month;
         req.session.WeekNumber = WeekNumber;
 
-        // 리다이렉트
-        res.redirect(`show/${userId}`);
+        // 세션 저장 후 리다이렉트
+        req.session.save((err) => {
+            if (err) {
+                console.error("Error saving session:", err);
+                return res.status(500).send("Internal Server Error");
+            }
+            res.redirect(`/checklist/show/${userId}`);
+        });
     } catch (error) {
         console.error("Error occurred:", error);
         res.status(500).send("Internal Server Error");
