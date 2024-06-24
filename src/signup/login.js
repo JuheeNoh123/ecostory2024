@@ -23,7 +23,7 @@ router.post('/login', async (req, res) => {
             userid: user.userid      
         }, privateKey, {
             algorithm: 'RS256',
-            expiresIn: '2h'      
+            expiresIn: '24h'      
         });
         
         //res.cookie('user', token);

@@ -27,6 +27,7 @@ router.post('/show', verify, async(req,res)=>{
 router.get('/show/:userid', async(req, res)=>{
     try{
 
+        
         let userId = req.params.userid;   //인증된 사용자의 ID 가져오기 :njh
     
         //let userId = req.params.userid;   //njh
