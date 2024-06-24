@@ -109,7 +109,7 @@ app.use('/user', userRouter);
 app.use('/', dataRouter);
 //app.use('/guide', gptRouter);
 app.use('/guide', makeplanRouter);
-app.use('/guide', makeplanRouter);
+
 app.use('/checklist', checklistRouter);
 //app.use('/checklist', checklistRouter);
 
