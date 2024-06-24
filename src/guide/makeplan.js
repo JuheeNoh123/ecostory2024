@@ -126,7 +126,7 @@ router.post('/makeplan', verify, async (req, res) => {
         req.session.date = date;
         req.session.week = week;
         req.session.category_Id = category_Id;
-        req.session.guide_Id = guide_Id;
+        req.session.guide_list = guide_Id;
 
         // 세션 저장 후 리다이렉트
         req.session.save((err) => {
