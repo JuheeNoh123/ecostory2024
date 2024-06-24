@@ -117,10 +117,8 @@ async function show_checklist(userId, date){
 router.post('/makeplan', verify, async (req, res) => {
     try {
         const userId = req.user.userid; // req.user에서 유저 ID를 가져옵니다.
-        const date = req.body.date;
-        const week = req.body.week;
-        const category_Id = req.body.checklist.category_Id;
-        const guide_Id = req.body.checklist.guide_Id;
+        const { date, week, checklist } = req.body;
+        const { category_Id, guide_Id } = checklist;
 
         console.log(userId, date, week, category_Id, guide_Id);
 
@@ -147,10 +145,7 @@ router.post('/makeplan', verify, async (req, res) => {
 router.get('/makeplan/:userid', async (req, res) => {
     try {
         const userId = req.params.userid;
-        const date = req.session.date;
-        const guide_list = req.session.guide_Id;
-        const category_Id = req.session.category_Id;
-        const week = req.session.week;
+        const { date, week, category_Id, guide_list } = req.session;
 
         console.log("Session data:", { date, guide_list, category_Id, week });
 
