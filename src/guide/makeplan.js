@@ -359,19 +359,27 @@ router.post('/sidebar', verify, async(req,res)=>{
         const week = req.body.week;
         const date = req.body.month;
 
-        // 세션에 데이터 설정
-        req.session.date = date;
-        req.session.week = week;
-
-        console.log(user,date,week )
+        
         // 리다이렉트
         // 세션 저장 후 리다이렉트
-        req.session.save((err) => {
+        req.session.regenerate((err) => {
             if (err) {
-                console.error("Error saving session:", err);
+                console.error("Error regenerate session:", err);
                 return res.status(500).send("Internal Server Error");
             }
-            res.redirect(`/guide/sidebar/${user}`);
+            // 세션에 데이터 설정
+            req.session.date = date;
+            req.session.week = week;
+
+            console.log(user,date,week );
+            req.session.save((err)=>{
+                if (err) {
+                    console.error("Error save session:", err);
+                    return res.status(500).send("Internal Server Error");
+                }
+                res.redirect(`/guide/sidebar/${user}`);
+            })
+            
         });
     } catch (error) {
         console.error("Error occurred:", error);
@@ -379,7 +387,7 @@ router.post('/sidebar', verify, async(req,res)=>{
     }
 })
 router.get('/sidebar/:userid', async(req, res)=>{
-    console.log(req);
+    console.log(req.session);
     let user = req.params.userid;   //njh
     const week = req.session.week;
     const date = req.session.date;
