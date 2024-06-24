@@ -138,18 +138,6 @@ router.post('/makeplan', verify, async(req,res)=>{
 })
 
 router.get('/makeplan/:userid', async(req,res)=>{
-    /*
-    {
-		"userId":"njh",
-		"date":5,
-		"week":1,
-        "checklist":{
-            "category_Id" : [100,102,106],
-            "guide_Id" : [427,428,429,447,448,449,571,572,569,612,614]
-        }
-    }
-    */
-    //const userId = req.body.userId;
     try{
         const userId = req.params.userid;   
         const date = req.session.date;
@@ -161,27 +149,28 @@ router.get('/makeplan/:userid', async(req,res)=>{
         }
         const guide_list = req.session.guide_Id;
         const listcnt= guide_list.length;
+        console.log("listcnt",listcnt)
         const category_Id = req.session.category_Id;
         const category_cnt = category_Id.length;
         
         for(let i=0;i<guide_list.length;i++){
-            console.log(guide_list[i]);
+            console.log("guide_list[i]",guide_list[i]);
             final_list.push(guide_list[i]);
         }
-        console.log(final_list)
+        console.log("FINAL_lIST:",final_list)
         if(listcnt<25){
             for(let i=0;i<category_cnt;i++){
                 let guide = new guide_model('', category_Id[i]);
                 const extra_guide = await guide.findwithcategoryId();
-                console.log(extra_guide);
+                console.log("extra_guide",extra_guide);
                 sum.push(extra_guide);
             }
-            console.log(sum)
+            console.log("sum",sum)
             let cnt = 0;
             while(cnt<(25-listcnt)){
                 const idx1 = await randomInt(0, category_cnt-1);
                 const idx2 = await randomInt(0, sum[idx1].length-1);
-                console.log(idx1, idx2);
+                console.log("idx1, idx2",idx1, idx2);
                 cnt++;
                 final_list.push(sum[idx1][idx2].guide_Id);
             }
@@ -201,7 +190,7 @@ router.get('/makeplan/:userid', async(req,res)=>{
         const sidebar = splitData_list.list[week-1];   // guide_nm으로 불러와야함
 
         
-        console.log(sidebar);
+        console.log("sidebar",sidebar);
 
         res.send(sidebar);
     }
