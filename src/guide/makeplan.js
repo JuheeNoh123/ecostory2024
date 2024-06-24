@@ -379,6 +379,7 @@ router.post('/sidebar', verify, async(req,res)=>{
     }
 })
 router.get('/sidebar/:userid', async(req, res)=>{
+    console.log(req);
     let user = req.params.userid;   //njh
     const week = req.session.week;
     const date = req.session.date;
