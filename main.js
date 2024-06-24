@@ -107,7 +107,7 @@ app.use('/user',signupRouter);
 app.use('/user',loginRouter);
 app.use('/user', userRouter);
 app.use('/', dataRouter);
-//app.use('/guide', gptRouter);
+app.use('/guide', gptRouter);
 app.use('/guide', makeplanRouter);
 
 app.use('/checklist', checklistRouter);
