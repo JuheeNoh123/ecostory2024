@@ -113,95 +113,111 @@ async function show_checklist(userId, date){
 }
 
 
-router.post('/makeplan', verify, async(req,res)=>{
+
+router.post('/makeplan', verify, async (req, res) => {
     try {
         const userId = req.user.userid; // req.user에서 유저 ID를 가져옵니다.
-        const date = req.body.date;   
-        const week = req.body.week;   
+        const date = req.body.date;
+        const week = req.body.week;
         const category_Id = req.body.checklist.category_Id;
         const guide_Id = req.body.checklist.guide_Id;
 
-
         console.log(userId, date, week, category_Id, guide_Id);
+
         // 세션에 데이터 설정
         req.session.date = date;
         req.session.week = week;
         req.session.category_Id = category_Id;
         req.session.guide_Id = guide_Id;
 
-        // 리다이렉트
-        res.redirect(`makeplan/${userId}`);
+        // 세션 저장 후 리다이렉트
+        req.session.save((err) => {
+            if (err) {
+                console.error("Error saving session:", err);
+                return res.status(500).send("Internal Server Error");
+            }
+            res.redirect(`/guide/makeplan/${userId}`);
+        });
     } catch (error) {
         console.error("Error occurred:", error);
         res.status(500).send("Internal Server Error");
     }
-})
+});
 
-router.get('/makeplan/:userid', async(req,res)=>{
-    try{
-        const userId = req.params.userid;   
+router.get('/makeplan/:userid', async (req, res) => {
+    try {
+        const userId = req.params.userid;
         const date = req.session.date;
+        const guide_list = req.session.guide_Id;
+        const category_Id = req.session.category_Id;
+        const week = req.session.week;
+
+        console.log("Session data:", { date, guide_list, category_Id, week });
+
+        if (!date || !guide_list || !category_Id) {
+            return res.status(400).send("Invalid session data");
+        }
+
         console.log(userId);
-        
+
         let user = new user_model(userId);
         let Isuser = await user.find();
-        if(!Isuser){
-            res.send("등록되지 않은 ID 입니다.");
+        if (!Isuser) {
+            return res.send("등록되지 않은 ID 입니다.");
         }
-        const guide_list = req.session.guide_Id;
-        console.log(date,guide_list);
-        const listcnt= guide_list.length;
-        console.log("listcnt",listcnt)
-        const category_Id = req.session.category_Id;
+
+        const listcnt = guide_list.length;
+        console.log("listcnt", listcnt);
         const category_cnt = category_Id.length;
-        
-        for(let i=0;i<guide_list.length;i++){
-            console.log("guide_list[i]",guide_list[i]);
+
+        let final_list = [];
+        for (let i = 0; i < guide_list.length; i++) {
+            console.log("guide_list[i]", guide_list[i]);
             final_list.push(guide_list[i]);
         }
-        console.log("FINAL_lIST:",final_list)
-        if(listcnt<25){
-            for(let i=0;i<category_cnt;i++){
+        console.log("FINAL_LIST:", final_list);
+        let sum = [];
+
+        if (listcnt < 25) {
+            for (let i = 0; i < category_cnt; i++) {
                 let guide = new guide_model('', category_Id[i]);
                 const extra_guide = await guide.findwithcategoryId();
-                console.log("extra_guide",extra_guide);
+                console.log("extra_guide", extra_guide);
                 sum.push(extra_guide);
             }
-            console.log("sum",sum)
+
+            console.log("sum", sum);
             let cnt = 0;
-            while(cnt<(25-listcnt)){
-                const idx1 = await randomInt(0, category_cnt-1);
-                const idx2 = await randomInt(0, sum[idx1].length-1);
-                console.log("idx1, idx2",idx1, idx2);
+            while (cnt < (25 - listcnt)) {
+                const idx1 = await randomInt(0, category_cnt - 1);
+                const idx2 = await randomInt(0, sum[idx1].length - 1);
+                console.log("idx1, idx2", idx1, idx2);
                 cnt++;
                 final_list.push(sum[idx1][idx2].guide_Id);
             }
         }
-        console.log("전\n",final_list);
+        console.log("전\n", final_list);
 
         await shuffle(final_list);
 
-        console.log('후\n',final_list);
+        console.log('후\n', final_list);
         //console.log(final_list.length);
-        
+
         const splitData_list = await splitweeks(final_list);
 
         await save(splitData_list, date, userId);
 
-        const week = req.session.week;
-        const sidebar = splitData_list.list[week-1];   // guide_nm으로 불러와야함
+        const sidebar = splitData_list.list[week - 1]; // guide_nm으로 불러와야함
 
-        
-        console.log("sidebar",sidebar);
+        console.log("sidebar", sidebar);
 
         res.send(sidebar);
-    }
-    catch (error) {
+    } catch (error) {
         console.error("Error occurred:", error);
         res.status(500).send("Internal Server Error");
     }
-    
-})
+});
+
 
 
 router.delete('/delete', verify, async(req,res)=>{
