@@ -142,12 +142,14 @@ router.get('/makeplan/:userid', async(req,res)=>{
         const userId = req.params.userid;   
         const date = req.session.date;
         console.log(userId);
+        
         let user = new user_model(userId);
         let Isuser = await user.find();
         if(!Isuser){
             res.send("등록되지 않은 ID 입니다.");
         }
         const guide_list = req.session.guide_Id;
+        console.log(date,guide_list);
         const listcnt= guide_list.length;
         console.log("listcnt",listcnt)
         const category_Id = req.session.category_Id;
