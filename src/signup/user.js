@@ -1,47 +1,26 @@
 const express = require('express');
 var router = express.Router();
-const fs = require('fs');
-const jwt = require('jsonwebtoken');
+
 const user_model = require('./models/reg_model');
 const post_model = require('./models/post_model');
-const publickey = fs.readFileSync('./bin/publicKey.key', 'utf8');
-//토큰 확인
-async function checktoken(authHeader){
-    let User = {"userid": ""};
-    
-    // Bearer 토큰이므로 Bearer와 토큰을 분리합니다. 토큰이 없다면 undefined가 됩니다.
-    const token = authHeader && authHeader.split(' ')[1];
+const verify = require('./verify')
 
-    if (token == null) {
-        // 토큰이 없으면 401 Unauthorized 응답을 보냅니다.
-        console.log("토큰X");
-        return false;
+router.get('/mypage', verify,async(req, res) => {
+    try{
+        const userId = req.user.userid;
+        req.session.userId = userId;
+        res.redirect(`mypage/${userId}`);
     }
-    jwt.verify(token, publickey, { algorithms: 'RS256' }, (err, user) => {
-        if (err) {
-            // 토큰이 유효하지 않으면 403 Forbidden 응답을 보냅니다.
-            console.log("토큰 유효 X");
-            return false;
-        }
-        console.log(user);
-        User = user
-    });
-    return User;
-}
-
+    catch (error) {
+        console.error("Error occurred:", error);
+        res.status(500).send("Internal Server Error");
+    }
+})
 
 //마이페이지 - 메인창
-router.get('/mypage/:userid', async(req, res) => {
-    
-    const authHeader = req.headers['authorization'];
-    var IsLogIn = await checktoken(authHeader);
-    const userId = req.params.userid;   //njh
-
-    console.log(IsLogIn);
-    if (IsLogIn.userid != userId){
-        res.redirect(`/user/${userId}/share`);
-    }
-    else{
+router.get('/mypage/:userid',verify, async(req, res) => {
+    try{
+        const userId = req.params.userid;   //njh
         const user = new user_model(userId);
         const user_name = await user.findName();
         const user_Id = await user.findId(userId);  //{ id: 12 }
@@ -60,23 +39,17 @@ router.get('/mypage/:userid', async(req, res) => {
             returnJson.post = [];
         }
         res.send(returnJson);
+    }    
+    catch (error) {
+        console.error("Error occurred:", error);
+        res.status(500).send("Internal Server Error");
     }
-    
-    
-    
-
     
 });
 
 //게시글 작성하기
-router.post('/mypage/:userid/post', async(req, res)=>{
-    const authHeader = req.headers['authorization'];
-    var IsLogIn = await checktoken(authHeader);
+router.post('/mypage/:userid/post', verify, async(req, res)=>{
     const userId = req.params.userid;   //njh
-    if(IsLogIn.userid != userId){
-        res.sendStatus(403);
-    }
-    
     const post_Image = req.body.post_Image;
     const content = req.body.content;
     const user = new user_model(userId);
@@ -90,13 +63,8 @@ router.post('/mypage/:userid/post', async(req, res)=>{
 
 //게시글 수정하기
 router.put('/mypage/:userid/update', async(req, res)=>{
-    const authHeader = req.headers['authorization'];
-    var IsLogIn = await checktoken(authHeader);
+
     const userId = req.params.userid;   //njh
-    if(IsLogIn.userid != userId){
-        res.sendStatus(403);
-    }
-    
     const post_Id = req.body.post_Id;
     const post_Image = req.body.post_Image;
     const content = req.body.content;
@@ -128,26 +96,26 @@ router.delete('/mypage/:userid/delete', async(req, res)=>{
     res.send("OK");
 })
 
-router.get('/:userid/share', async(req, res)=>{
-    const userId = req.params.userid;   //njh
-    const user = new user_model(userId);
-    const user_name = await user.findName();
-    const user_Id = await user.findId(userId);  //{ id: 12 }
-    const user_image = await user.findImage();
-    const post = new post_model(user_Id.id);
-    const posts = await post.findall();
-    //console.log(posts);
-    returnJson = {};
-    returnJson.Isshare = "비회원 전용 페이지"
-    returnJson.user_name = user_name.name;
-    returnJson.user_image = user_image.userImage;
-    if (posts[0][0] != null){
-        returnJson.post = posts[0];
-    }
-    else{
-        returnJson.post = [];
-    }
-    res.send(returnJson);
-})
+// router.get('/:userid/share', async(req, res)=>{
+//     const userId = req.params.userid;   //njh
+//     const user = new user_model(userId);
+//     const user_name = await user.findName();
+//     const user_Id = await user.findId(userId);  //{ id: 12 }
+//     const user_image = await user.findImage();
+//     const post = new post_model(user_Id.id);
+//     const posts = await post.findall();
+//     //console.log(posts);
+//     returnJson = {};
+//     returnJson.Isshare = "비회원 전용 페이지"
+//     returnJson.user_name = user_name.name;
+//     returnJson.user_image = user_image.userImage;
+//     if (posts[0][0] != null){
+//         returnJson.post = posts[0];
+//     }
+//     else{
+//         returnJson.post = [];
+//     }
+//     res.send(returnJson);
+// })
 
 module.exports = router;

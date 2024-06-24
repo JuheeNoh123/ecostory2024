@@ -23,7 +23,7 @@ router.post('/login', async (req, res) => {
             userid: user.userid      
         }, privateKey, {
             algorithm: 'RS256',
-            expiresIn: '1h'      
+            expiresIn: '2h'      
         });
         
         //res.cookie('user', token);
@@ -40,6 +40,17 @@ router.post('/login', async (req, res) => {
     }
     
     
+})
+
+router.get('/logout', async (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error('Failed to destroy session:', err);
+            return res.sendStatus(500); // 예외 처리
+        }
+        res.clearCookie('connect.sid'); // 세션 쿠키도 지워줍니다 (선택 사항)
+        res.send('Logged out successfully');
+    });
 })
 
 router.post('/test', verify,async (req, res) => {

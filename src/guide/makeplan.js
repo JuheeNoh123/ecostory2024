@@ -3,7 +3,7 @@ var router = express.Router();
 const guide_model = require('../gpt/models/guide_model');
 const checklist_model = require('./models/checklist_model');
 const user_model = require('../signup/models/reg_model');
-
+var verify = require('../signup/verify');
 const sum = [];
 const final_list = [];
 
@@ -111,7 +111,33 @@ async function show_checklist(userId, date){
     console.log(week);
     return week;
 }
-router.post('/makeplan/:userid', async(req,res)=>{
+
+
+router.post('/makeplan', verify, async(req,res)=>{
+    try {
+        const userId = req.user.userid; // req.user에서 유저 ID를 가져옵니다.
+        const date = req.body.date;   
+        const week = req.body.week;   
+        const category_Id = req.body.checklist.category_Id;
+        const guide_Id = req.body.checklist.guide_Id;
+
+
+        console.log(userId, date, week, category_Id, guide_Id);
+        // 세션에 데이터 설정
+        req.session.date = date;
+        req.session.week = week;
+        req.session.category_Id = category_Id;
+        req.session.guide_Id = guide_Id;
+
+        // 리다이렉트
+        res.redirect(`makeplan/${userId}`);
+    } catch (error) {
+        console.error("Error occurred:", error);
+        res.status(500).send("Internal Server Error");
+    }
+})
+
+router.get('/makeplan/:userid', async(req,res)=>{
     /*
     {
 		"userId":"njh",
@@ -124,63 +150,90 @@ router.post('/makeplan/:userid', async(req,res)=>{
     }
     */
     //const userId = req.body.userId;
-    const userId = req.params.userid;   
-    const date = req.body.date;
-    console.log(userId);
-    let user = new user_model(userId);
-    let Isuser = await user.find();
-    if(!Isuser){
-        res.send("등록되지 않은 ID 입니다.");
-    }
-    const guide_list = req.body.checklist.guide_Id;
-    const listcnt= guide_list.length;
-    const category_Id = req.body.checklist.category_Id;
-    const category_cnt = category_Id.length;
-    
-    for(let i=0;i<guide_list.length;i++){
-        console.log(guide_list[i]);
-        final_list.push(guide_list[i]);
-    }
-    console.log(final_list)
-    if(listcnt<25){
-        for(let i=0;i<category_cnt;i++){
-            let guide = new guide_model('', category_Id[i]);
-            const extra_guide = await guide.findwithcategoryId();
-            console.log(extra_guide);
-            sum.push(extra_guide);
+    try{
+        const userId = req.params.userid;   
+        const date = req.session.date;
+        console.log(userId);
+        let user = new user_model(userId);
+        let Isuser = await user.find();
+        if(!Isuser){
+            res.send("등록되지 않은 ID 입니다.");
         }
-        console.log(sum)
-        let cnt = 0;
-        while(cnt<(25-listcnt)){
-            const idx1 = await randomInt(0, category_cnt-1);
-            const idx2 = await randomInt(0, sum[idx1].length-1);
-            console.log(idx1, idx2);
-            cnt++;
-            final_list.push(sum[idx1][idx2].guide_Id);
+        const guide_list = req.session.guide_Id;
+        const listcnt= guide_list.length;
+        const category_Id = req.session.category_Id;
+        const category_cnt = category_Id.length;
+        
+        for(let i=0;i<guide_list.length;i++){
+            console.log(guide_list[i]);
+            final_list.push(guide_list[i]);
         }
+        console.log(final_list)
+        if(listcnt<25){
+            for(let i=0;i<category_cnt;i++){
+                let guide = new guide_model('', category_Id[i]);
+                const extra_guide = await guide.findwithcategoryId();
+                console.log(extra_guide);
+                sum.push(extra_guide);
+            }
+            console.log(sum)
+            let cnt = 0;
+            while(cnt<(25-listcnt)){
+                const idx1 = await randomInt(0, category_cnt-1);
+                const idx2 = await randomInt(0, sum[idx1].length-1);
+                console.log(idx1, idx2);
+                cnt++;
+                final_list.push(sum[idx1][idx2].guide_Id);
+            }
+        }
+        console.log("전\n",final_list);
+
+        await shuffle(final_list);
+
+        console.log('후\n',final_list);
+        //console.log(final_list.length);
+        
+        const splitData_list = await splitweeks(final_list);
+
+        await save(splitData_list, date, userId);
+
+        const week = req.session.week;
+        const sidebar = splitData_list.list[week-1];   // guide_nm으로 불러와야함
+
+        
+        console.log(sidebar);
+
+        res.send(sidebar);
     }
-    console.log("전\n",final_list);
-
-    await shuffle(final_list);
-
-    console.log('후\n',final_list);
-    //console.log(final_list.length);
-    
-    const splitData_list = await splitweeks(final_list);
-
-    await save(splitData_list, date, userId);
-
-    const week = req.body.week;
-    const sidebar = splitData_list.list[week-1];   // guide_nm으로 불러와야함
-
-    
-    console.log(sidebar);
-
-    res.send(sidebar);
+    catch (error) {
+        console.error("Error occurred:", error);
+        res.status(500).send("Internal Server Error");
+    }
     
 })
 
-router.post('/delete/:userid', async(req,res)=>{
+
+router.delete('/delete', verify, async(req,res)=>{
+    try {
+        const del_list = req.body.list;
+        //let userID = req.body.userId;
+        let userID = req.user.userid;
+        const date = req.body.month;
+
+        // 세션에 데이터 설정
+        req.session.del_list = del_list;
+        req.session.date = date;
+
+        console.log(del_list,userID,date )
+        // 리다이렉트
+        res.redirect(`delete/${userID}`);
+    } catch (error) {
+        console.error("Error occurred:", error);
+        res.status(500).send("Internal Server Error");
+    }
+})
+
+router.delete('/delete/:userid', async(req,res)=>{
 /*
 {
 	"userid":"njh",
@@ -210,56 +263,102 @@ router.post('/delete/:userid', async(req,res)=>{
 	]	
 }
 */
-    const del_list = req.body.list;
-    //let userID = req.body.userId;
-    let userID = req.params.userid;
-    const date = req.body.month;
-    const now_week = req.body.now_week;
-    const guide = new guide_model();
-    const user= new user_model(userID,'','');
-    const checklist = new checklist_model();
+    try{
+        const del_list = req.session.del_list;
+        //let userID = req.body.userId;
+        let userID = req.params.userid;
+        const date = req.session.date;
+        console.log(del_list);
+        const guide = new guide_model();
+        const user= new user_model(userID,'','');
+        const checklist = new checklist_model();
 
-    userID = await user.findId();
-    for(let i=0;i<del_list.length;i++){
-        const delete_Id = del_list[i].guide_Id;
-        const week = del_list[i].week;
-        let idx = await randomInt(427, 614);
-        let new_NM = await guide.findwithguideId(idx);
-        console.log(new_NM[0][0]);
-        while(new_NM[0][0] == undefined || idx == delete_Id){
-            idx = await randomInt(427, 614);
-            new_NM = await guide.findwithguideId(idx);
-            console.log(idx);
+        userID = await user.findId();
+        for(let i=0;i<del_list.length;i++){
+            const delete_Id = del_list[i].guide_Id;
+            const week = del_list[i].week;
+            let idx = await randomInt(427, 614);
+            let new_NM = await guide.findwithguideId(idx);
+            console.log(new_NM[0][0]);
+            while(new_NM[0][0] == undefined || idx == delete_Id){
+                idx = await randomInt(427, 614);
+                new_NM = await guide.findwithguideId(idx);
+                console.log(idx);
+            }
+            console.log("new_NM[0][0]",new_NM[0][0]);
+            //del_list[i].guide_Id = idx;
+            // del_list[i].guide_NM = new_NM[0][0];
+            console.log(userID.id, date, week, delete_Id, idx)
+            await checklist.change(userID.id, date, week, delete_Id, idx);
+            
         }
-        console.log("new_NM[0][0]",new_NM[0][0]);
-        //del_list[i].guide_Id = idx;
-        // del_list[i].guide_NM = new_NM[0][0];
-        console.log(userID.id, date, week, delete_Id, idx)
-        await checklist.change(userID.id, date, week, delete_Id, idx);
-        //
+        
+        const ans = await show_checklist(userID.id, date);
+        console.log(ans);
+        res.send(ans); 
     }
-    
-    const ans = await show_checklist(userID.id, date);
-    console.log(ans);
-    res.send(ans); 
+    catch(error) {
+        console.error("Error occurred:", error);
+        res.status(500).send("Internal Server Error");
+
+    }
+})
+
+router.post('/checklist', verify, async(req,res)=>{
+    try {
+        const userID = req.user.userid;   //njh
+        const date = req.body.month;
+
+        // 세션에 데이터 설정
+        req.session.date = date;
+
+        console.log(userID,date )
+        // 리다이렉트
+        res.redirect(`checklist/${userID}`);
+    } catch (error) {
+        console.error("Error occurred:", error);
+        res.status(500).send("Internal Server Error");
+    }
+})
+router.get('/checklist/:userid', async(req,res)=>{
+    try{
+        let userID = req.params.userid;   //njh
+        const user= new user_model(userID,'','');
+        userID = await user.findId();
+        let date = req.session.date;
+        // let now_week = req.body.now_week;
+        let ans = await show_checklist(userID.id, date);
+        res.send(ans);
+    }
+    catch (error) {
+        console.error("Error occurred:", error);
+        res.status(500).send("Internal Server Error");
+    }
 })
 
 
-router.post('/checklist/:userid', async(req,res)=>{
-    let userID = req.params.userid;   //njh
-    //let userID = req.body.userId;
-    const user= new user_model(userID,'','');
-    userID = await user.findId();
-    let date = req.body.month;
-    // let now_week = req.body.now_week;
-    let ans = await show_checklist(userID.id, date);
-    res.send(ans);
-})
+router.post('/sidebar', verify, async(req,res)=>{
+    try {
+        let user = req.user.userid;   //njh
+        const week = req.body.week;
+        const date = req.body.month;
 
-router.post('/sidebar/:userid', async(req, res)=>{
+        // 세션에 데이터 설정
+        req.session.date = date;
+        req.session.week = week;
+
+        console.log(user,date,week )
+        // 리다이렉트
+        res.redirect(`sidebar/${user}`);
+    } catch (error) {
+        console.error("Error occurred:", error);
+        res.status(500).send("Internal Server Error");
+    }
+})
+router.get('/sidebar/:userid', async(req, res)=>{
     let user = req.params.userid;   //njh
-    const week = req.body.week;
-    const date = req.body.month;
+    const week = req.session.week;
+    const date = req.session.date;
     //let user = req.body.userId;
     console.log(user, date, week)
     const usermodel = new user_model(user);
@@ -275,6 +374,36 @@ router.post('/sidebar/:userid', async(req, res)=>{
 
 })
 
+
+router.put('/savesidebar', verify, async(req,res)=>{
+    try {
+        let userId = req.user.userid;   //njh
+        const month = req.body.month;
+        const week = req.body.week;
+
+        const IsWeekList1 = req.body.IsWeekList1;
+        const IsWeekList2 = req.body.IsWeekList2;
+        const IsWeekList3 = req.body.IsWeekList3;
+        const IsWeekList4 = req.body.IsWeekList4;
+        const IsWeekList5 = req.body.IsWeekList5;
+
+        // 세션에 데이터 설정
+        req.session.month = month;
+        req.session.week = week;
+
+        req.session.IsWeekList1 = IsWeekList1;
+        req.session.IsWeekList2 = IsWeekList2;
+        req.session.IsWeekList3 = IsWeekList3;
+        req.session.IsWeekList4 = IsWeekList4;
+        req.session.IsWeekList5 = IsWeekList5;
+
+        // 리다이렉트
+        res.redirect(`savesidebar/${userId}`);
+    } catch (error) {
+        console.error("Error occurred:", error);
+        res.status(500).send("Internal Server Error");
+    }
+})
 /*
 {
 	"userId":"njh",
@@ -288,31 +417,36 @@ router.post('/sidebar/:userid', async(req, res)=>{
 }
 */
 router.put('/savesidebar/:userid', async(req,res)=>{
-    let userId = req.params.userid;   //njh
-    //let userId = req.body.userId;
-    const month = req.body.month;
-    const week = req.body.week;
+    try{
+        let userId = req.params.userid;   //njh
+        //let userId = req.body.userId;
+        const month = req.session.month;
+        const week = req.session.week;
 
-    const IsWeekList1 = req.body.IsWeekList1;
-    const IsWeekList2 = req.body.IsWeekList2;
-    const IsWeekList3 = req.body.IsWeekList3;
-    const IsWeekList4 = req.body.IsWeekList4;
-    const IsWeekList5 = req.body.IsWeekList5;
-    
-    const user = new user_model(userId,'','')
-    userId = await user.findId();
-    userId = userId.id;
-    
-    const checklist = new checklist_model(userId, month, week, 
-                        '',IsWeekList1,
-                        '',IsWeekList2,
-                        '',IsWeekList3,
-                        '',IsWeekList4,
-                        '',IsWeekList5,)
-    
-    const ans = await checklist.updateIsweekList();
-    console.log(ans);
-    res.send('OK');
+        const IsWeekList1 = req.session.IsWeekList1;
+        const IsWeekList2 = req.session.IsWeekList2;
+        const IsWeekList3 = req.session.IsWeekList3;
+        const IsWeekList4 = req.session.IsWeekList4;
+        const IsWeekList5 = req.session.IsWeekList5;
+        
+        const user = new user_model(userId,'','')
+        userId = await user.findId();
+        userId = userId.id;
+        
+        const checklist = new checklist_model(userId, month, week, 
+                            '',IsWeekList1,
+                            '',IsWeekList2,
+                            '',IsWeekList3,
+                            '',IsWeekList4,
+                            '',IsWeekList5,)
+        
+        const ans = await checklist.updateIsweekList();
+        res.send('OK');
+    }
+    catch (error) {
+        console.error("Error occurred:", error);
+        res.status(500).send("Internal Server Error");
+    }
 })
 
 
