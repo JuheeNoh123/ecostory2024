@@ -384,12 +384,13 @@ router.get('/sidebar/:userid', async(req, res)=>{
     const week = req.session.week;
     const date = req.session.date;
     //let user = req.body.userId;
-    console.log(user, date, week)
+    console.log(user, date, week);
     const usermodel = new user_model(user);
     user = await usermodel.findId();
-    console.log(user)
+    console.log(user);
     const checklist = new checklist_model(user.id, date, week);
     let ans = await checklist.sidebar();
+    console.log(ans);
     let user_name = await usermodel.findName();
     ans[0][0].username= user_name.name;
     let user_image = await usermodel.findImage();
