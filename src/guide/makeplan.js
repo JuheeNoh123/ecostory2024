@@ -144,6 +144,7 @@ router.post('/makeplan', verify, async (req, res) => {
 
 router.get('/makeplan/:userid', async (req, res) => {
     try {
+        console.log(req);
         const userId = req.params.userid;
         const { date, week, category_Id, guide_list } = req.session;
 
