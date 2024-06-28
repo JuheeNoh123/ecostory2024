@@ -88,10 +88,13 @@ app.use(express.urlencoded( {extended : true } ));
 
 const sessionSecret = process.env.SESSION_SECRET;
 app.use(session({
-  secret:sessionSecret, // 세션을 서명하기 위한 비밀키, 암호화에 사용됨
-  resave: true, // 세션을 항상 저장할 지 여부
-  saveUninitialized: true, // 초기화되지 않은 세션을 저장소에 저장할 지 여부
-  cookie: { secure: false } // 쿠키 설정 (https가 아닌 환경에서는 false)
+  secret: sessionSecret,
+  resave: false, // 세션을 항상 저장하지 않도록 변경
+  saveUninitialized: false, // 초기화되지 않은 세션 저장하지 않도록 변경
+  cookie: {
+      secure: false,
+      maxAge: 1000 * 60 * 60 * 24 // 세션 유효 시간 설정 (예: 1일)
+  }
 }));
 
 
