@@ -359,7 +359,7 @@ router.post('/sidebar', verify, async(req,res)=>{
         let user = req.user.userid;   //njh
         const week = req.body.week;
         const date = req.body.month;
-
+        console.log("========================",req);
         
         // 리다이렉트
         // 세션 저장 후 리다이렉트
@@ -389,6 +389,7 @@ router.post('/sidebar', verify, async(req,res)=>{
     }
 })
 router.get('/sidebar/:userid', async(req, res)=>{
+    console.log("========================",req);
     console.log(JSON.stringify(req.session));
     let user = req.params.userid;   //njh
     const week = req.session.week;
