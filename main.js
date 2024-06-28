@@ -7,9 +7,7 @@ const cron = require('node-cron');
 const { spawn } = require('child_process');
 const cors = require('cors')
 const session = require('express-session'); // express-session 미들웨어 추가
-const RedisStore = require('connect-redis')(session);
-const redis = require('redis');
-const redisClient = redis.createClient();
+
 /*
 function runPythonScript_2() {
   const pythonProcess = spawn('python3', ['data/database.py']);
@@ -90,7 +88,6 @@ app.use(express.urlencoded( {extended : true } ));
 
 const sessionSecret = process.env.SESSION_SECRET;
 app.use(session({
-  store: new RedisStore({ client: redisClient }),
   secret:sessionSecret, // 세션을 서명하기 위한 비밀키, 암호화에 사용됨
   resave: false, // 세션을 항상 저장할 지 여부
   saveUninitialized: true, // 초기화되지 않은 세션을 저장소에 저장할 지 여부
