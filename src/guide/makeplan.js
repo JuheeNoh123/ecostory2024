@@ -134,6 +134,7 @@ router.post('/makeplan', verify, async (req, res) => {
                 console.error("Error saving session:", err);
                 return res.status(500).send("Internal Server Error");
             }
+            console.log(req.session);
             res.redirect(`/guide/makeplan/${userId}`);
         });
     } catch (error) {
@@ -144,7 +145,7 @@ router.post('/makeplan', verify, async (req, res) => {
 
 router.get('/makeplan/:userid', async (req, res) => {
     try {
-        console.log(req);
+        console.log(req.session);
         const userId = req.params.userid;
         const { date, week, category_Id, guide_list } = req.session;
 
