@@ -371,7 +371,7 @@ router.post('/sidebar', verify, async(req,res)=>{
             // 세션에 데이터 설정
             req.session.date = date;
             req.session.week = week;
-
+            console.log(req.session);
             console.log(user,date,week );
             req.session.save((err)=>{
                 if (err) {
