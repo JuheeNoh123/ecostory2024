@@ -378,6 +378,7 @@ router.post('/sidebar', verify, async(req,res)=>{
                     console.error("Error save session:", err);
                     return res.status(500).send("Internal Server Error");
                 }
+                console.log('Session data:', req.session);
                 res.redirect(`/guide/sidebar/${user}`);
             })
             
@@ -388,7 +389,7 @@ router.post('/sidebar', verify, async(req,res)=>{
     }
 })
 router.get('/sidebar/:userid', async(req, res)=>{
-    console.log(req.session);
+    console.log(JSON.stringify(req.session));
     let user = req.params.userid;   //njh
     const week = req.session.week;
     const date = req.session.date;
