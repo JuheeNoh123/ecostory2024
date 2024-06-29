@@ -3,22 +3,10 @@ var router = express.Router();
 
 const user_model = require('./models/reg_model');
 const post_model = require('./models/post_model');
-const verify = require('./verify')
 
-router.get('/mypage', verify,async(req, res) => {
-    try{
-        const userId = req.user.userid;
-        req.session.userId = userId;
-        res.redirect(`mypage/${userId}`);
-    }
-    catch (error) {
-        console.error("Error occurred:", error);
-        res.status(500).send("Internal Server Error");
-    }
-})
 
 //마이페이지 - 메인창
-router.get('/mypage/:userid',verify, async(req, res) => {
+router.get('/mypage/:userid', async(req, res) => {
     try{
         const userId = req.params.userid;   //njh
         const user = new user_model(userId);
@@ -48,7 +36,7 @@ router.get('/mypage/:userid',verify, async(req, res) => {
 });
 
 //게시글 작성하기
-router.post('/mypage/:userid/post', verify, async(req, res)=>{
+router.post('/mypage/:userid/post', async(req, res)=>{
     const userId = req.params.userid;   //njh
     const post_Image = req.body.post_Image;
     const content = req.body.content;
@@ -79,13 +67,8 @@ router.put('/mypage/:userid/update', async(req, res)=>{
 
 //게시글 삭제하기
 router.delete('/mypage/:userid/delete', async(req, res)=>{
-    const authHeader = req.headers['authorization'];
-    var IsLogIn = await checktoken(authHeader);
-    const userId = req.params.userid;   //njh
-    if(IsLogIn.userid != userId){
-        res.sendStatus(403);
-    }
     
+    const userId = req.params.userid;   //njh
     const post_Id = req.body.post_Id;
     const user = new user_model(userId);
     const user_Id = await user.findId(userId);  //12

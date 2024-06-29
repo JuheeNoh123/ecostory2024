@@ -99,7 +99,7 @@ var checklistRouter = require('./src/guide/checklist');
 var userRouter = require('./src/signup/user');
 
 
-app.use('/user',signupRouter);
+app.use('/user',verify,signupRouter);
 app.use('/user',loginRouter);
 app.use('/user', userRouter);
 app.use('/', dataRouter);
