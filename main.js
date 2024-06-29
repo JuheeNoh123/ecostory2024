@@ -6,7 +6,6 @@ const port = 8000;
 const cron = require('node-cron');
 const { spawn } = require('child_process');
 const cors = require('cors')
-const session = require('express-session'); // express-session 미들웨어 추가
 
 /*
 function runPythonScript_2() {
@@ -86,16 +85,6 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded( {extended : true } ));
 
-const sessionSecret = process.env.SESSION_SECRET;
-app.use(session({
-  secret: sessionSecret,
-  resave: false, // 세션을 항상 저장하지 않도록 변경
-  saveUninitialized: false, // 초기화되지 않은 세션 저장하지 않도록 변경
-  cookie: {
-      secure: false,
-      maxAge: 1000 * 60 * 60 * 24 // 세션 유효 시간 설정 (예: 1일)
-  }
-}));
 
 
 
@@ -104,20 +93,21 @@ var signupRouter = require('./src/signup/register');
 var loginRouter = require('./src/signup/login');
 var dataRouter = require('./src/ecodata/ecodata');
 var gptRouter = require('./src/gpt/callgpt');
-
+var verify = require('./src/signup/verify');
 var makeplanRouter = require('./src/guide/makeplan');
 var checklistRouter = require('./src/guide/checklist');
 var userRouter = require('./src/signup/user');
+
 
 app.use('/user',signupRouter);
 app.use('/user',loginRouter);
 app.use('/user', userRouter);
 app.use('/', dataRouter);
 app.use('/guide', gptRouter);
-app.use('/guide', makeplanRouter);
+app.use('/guide',verify, makeplanRouter);
 
-app.use('/checklist', checklistRouter);
-//app.use('/checklist', checklistRouter);
+app.use('/checklist', verify,checklistRouter);
+
 
 
 
