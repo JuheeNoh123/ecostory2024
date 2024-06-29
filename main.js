@@ -99,9 +99,9 @@ var checklistRouter = require('./src/guide/checklist');
 var userRouter = require('./src/signup/user');
 
 
-app.use('/user',verify,signupRouter);
+app.use('/user',signupRouter);
 app.use('/user',loginRouter);
-app.use('/user', userRouter);
+app.use('/user',verify, userRouter);
 app.use('/', dataRouter);
 app.use('/guide', gptRouter);
 app.use('/guide',verify, makeplanRouter);

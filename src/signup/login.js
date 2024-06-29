@@ -9,7 +9,10 @@ const jwt = require('jsonwebtoken');
 //const PRIVATEKEY = process.env.PRIVATEKEY;
 const privateKey = fs.readFileSync('./bin/privateKey.key', 'utf8');
 //const privateKey = fs.readFileSync('./bin/private_key.pem')
+
+
 router.post('/login', async (req, res) => {
+    
     const { userid, password } = req.body;
     if (!userid || !password ) {
         return res.status(400).send({ message: 'id, password는 필수입력 사항입니다.' });
