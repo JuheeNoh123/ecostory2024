@@ -37,14 +37,20 @@ router.get('/mypage/:userid', async(req, res) => {
 
 //게시글 작성하기
 router.post('/mypage/:userid/post', async(req, res)=>{
-    const userId = req.params.userid;   //njh
-    const post_Image = req.body.post_Image;
-    const content = req.body.content;
-    const user = new user_model(userId);
-    const user_Id = await user.findId(userId);  //12
-    //console.log(user_Id);
-    const post = new post_model(user_Id.id, post_Image, content);
-    await post.save();
+    try{
+        const userId = req.params.userid;   //njh
+        const post_Image = req.body.post_Image;
+        const content = req.body.content;
+        const user = new user_model(userId);
+        const user_Id = await user.findId(userId);  //12
+        //console.log(user_Id);
+        const post = new post_model(user_Id.id, post_Image, content);
+        await post.save();
+    }
+    catch (error){
+        console.error("Error occurred:", error);
+        res.status(500).send("Internal Server Error");
+    }
 
     res.send("OK");
 })
