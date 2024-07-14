@@ -248,22 +248,27 @@ router.post('/checklist/:userid', async(req,res)=>{
 
 
 router.post('/sidebar/:userid', async(req, res)=>{
-    let user = req.params.userid;   //njh
-    const week = req.body.week;
-    const date = req.body.month;
+    try{
+        let user = req.params.userid;   //njh
+        const week = req.body.week;
+        const date = req.body.month;
 
-    console.log(user, date, week);
-    const usermodel = new user_model(user);
-    user = await usermodel.findId();
-    console.log(user);
-    const checklist = new checklist_model(user.id, date, week);
-    let ans = await checklist.sidebar();
-    console.log(ans);
-    let user_name = await usermodel.findName();
-    ans[0][0].username= user_name.name;
-    let user_image = await usermodel.findImage();
-    ans[0][0].image= user_image.userImage;
-    res.send(ans[0][0]);
+        console.log(user, date, week);
+        const usermodel = new user_model(user);
+        user = await usermodel.findId();
+        console.log(user);
+        const checklist = new checklist_model(user.id, date, week);
+        let ans = await checklist.sidebar();
+        console.log(ans);
+        let user_name = await usermodel.findName();
+        ans[0][0].username= user_name.name;
+        let user_image = await usermodel.findImage();
+        ans[0][0].image= user_image.userImage;
+        res.send(ans[0][0]);
+    }catch{
+        res.send('체크리스트가 비어있습니다.');
+    }
+    
 
 })
 
