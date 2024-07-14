@@ -107,8 +107,6 @@ async function show_checklist(userId, date){
     // week.push({
     //     sidebar:week[now_week]
     // })
-    console.log(check[0]);
-    console.log(week);
     return week;
 }
 
@@ -240,8 +238,8 @@ router.post('/checklist/:userid', async(req,res)=>{
         res.send(ans);
     }
     catch (error) {
-        console.error("Error occurred:", error);
-        res.status(500).send("Internal Server Error");
+        
+        res.send("체크리스트가 비었습니다. 새로 만들어주세요");
     }
 })
 
