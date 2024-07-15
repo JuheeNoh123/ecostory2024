@@ -269,7 +269,7 @@ router.post('/sidebar/:userid', async(req, res)=>{
         let user_name = await usermodel.findName();
         ans = {
             "message":"체크리스트가 비어있습니다.",
-            "user_name":user_name.name
+            "user":user_name.name
         }
         
         res.send(ans);
