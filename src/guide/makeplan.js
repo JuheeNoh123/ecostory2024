@@ -264,7 +264,15 @@ router.post('/sidebar/:userid', async(req, res)=>{
         ans[0][0].image= user_image.userImage;
         res.send(ans[0][0]);
     }catch{
-        res.send('체크리스트가 비어있습니다.');
+        let user = req.params.userid;
+        const usermodel = new user_model(user);
+        let user_name = await usermodel.findName();
+        ans = {
+            "message":"체크리스트가 비어있습니다.",
+            "user_name":user_name.name
+        }
+        
+        res.send(ans);
     }
     
 
