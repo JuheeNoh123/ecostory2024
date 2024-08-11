@@ -254,6 +254,7 @@ router.post('/sidebar/:userid', async(req, res)=>{
         console.log(user, date, week);
         const usermodel = new user_model(user);
         user = await usermodel.findId();
+        
         console.log(user);
         const checklist = new checklist_model(user.id, date, week);
         let ans = await checklist.sidebar();
@@ -267,9 +268,11 @@ router.post('/sidebar/:userid', async(req, res)=>{
         let user = req.params.userid;
         const usermodel = new user_model(user);
         let user_name = await usermodel.findName();
+        let userImage = await usermodel.findImage();
         ans = {
             "message":"체크리스트가 비어있습니다.",
-            "user":user_name.name
+            "user":user_name.name,
+            "userImage":userImage.userImage
         }
         
         res.send(ans);
