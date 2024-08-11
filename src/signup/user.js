@@ -35,6 +35,23 @@ router.get('/mypage/:userid', async(req, res) => {
     
 });
 
+router.put('/profile/:userid/update', async(req, res) => {
+    try{
+        const userId = req.params.userid;   //njh
+        const user = new user_model(userId);
+        const userImage = req.body.userImage;
+        const name = req.body.name;
+        let result = await user.changeProfile(userImage, name);
+        console.log(result);
+        res.send("OK");
+    }    
+    catch (error) {
+        console.error("Error occurred:", error);
+        res.status(500).send("Internal Server Error");
+    }
+    
+});
+
 //게시글 작성하기
 router.post('/mypage/:userid/post', async(req, res)=>{
     try{

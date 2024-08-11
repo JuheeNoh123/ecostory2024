@@ -37,6 +37,12 @@ module.exports = class User {
         return name[0][0];
     }
 
+    async changeProfile(userImage, name) {
+        return await db.execute(
+            'UPDATE user SET userImage = ?, name = ? WHERE userid = ?',
+            [userImage, name, this.userid]
+        );
+    }
 
     async login() {
 	 // 사용자가 제공한 비밀번호
