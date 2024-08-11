@@ -102,26 +102,5 @@ router.delete('/mypage/:userid/delete', async(req, res)=>{
     res.send("OK");
 })
 
-// router.get('/:userid/share', async(req, res)=>{
-//     const userId = req.params.userid;   //njh
-//     const user = new user_model(userId);
-//     const user_name = await user.findName();
-//     const user_Id = await user.findId(userId);  //{ id: 12 }
-//     const user_image = await user.findImage();
-//     const post = new post_model(user_Id.id);
-//     const posts = await post.findall();
-//     //console.log(posts);
-//     returnJson = {};
-//     returnJson.Isshare = "비회원 전용 페이지"
-//     returnJson.user_name = user_name.name;
-//     returnJson.user_image = user_image.userImage;
-//     if (posts[0][0] != null){
-//         returnJson.post = posts[0];
-//     }
-//     else{
-//         returnJson.post = [];
-//     }
-//     res.send(returnJson);
-// })
 
 module.exports = router;

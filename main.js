@@ -97,8 +97,9 @@ var verify = require('./src/signup/verify');
 var makeplanRouter = require('./src/guide/makeplan');
 var checklistRouter = require('./src/guide/checklist');
 var userRouter = require('./src/signup/user');
+var shareRouter = require('./src/signup/share');
 
-
+app.use('/', shareRouter);
 app.use('/user',signupRouter);
 app.use('/user',loginRouter);
 app.use('/user',verify, userRouter);

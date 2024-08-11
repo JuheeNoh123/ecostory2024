@@ -34,6 +34,18 @@ module.exports = class User {
         }
     }
 
+    async findByUserIdandPostId(postId){
+        try{
+            return await db.execute(`select id,image,content from post where userId = ? and id = ?`,
+                [this.userId, postId]);
+            
+        }
+        catch(err){
+            console.error('Error during findByUserIdandPostId:', err);
+            return false;
+        }
+    }
+
     async update(id){
         try{
             return await db.execute(`update post set image=?, content=? where id=? and userId = ?`,
